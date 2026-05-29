@@ -1,0 +1,24 @@
+{
+  "ecosystemCap": "$12.4T",
+  "momentum24h": "+2.7%",
+  "activeUsers": "41.2M",
+  "trackedPlatforms": 35,
+  "lastUpdated": "LIVE",
+  "layers": {
+    "ai": { "name": "AI Layer", "value": "$2.1T" },
+    "commerce": { "name": "Commerce Layer", "value": "$4.8T" },
+    "social": { "name": "Social Layer", "value": "$2.3T" },
+    "fintech": { "name": "Fintech Layer", "value": "$1.7T" },
+    "prediction": { "name": "Prediction Layer", "value": "$620B" }
+  },
+  "ticker": [
+    { "name": "OpenAI", "trend": "up" },
+    { "name": "xAI", "trend": "up" },
+    { "name": "Amazon", "trend": "up" },
+    { "name": "Tesla", "trend": "down" },
+    { "name": "Coinbase", "trend": "up" },
+    { "name": "X Engagement", "trend": "up" }
+  ],
+  "methodology": "The SSA Ecosystem Cap represents the combined real-time valuation, momentum, and engagement flow of the global consumer internet economy indexed by Shop Share Anywhere using public market capitalizations, private valuation estimates, platform engagement trends, AI ecosystem growth signals, and digital commerce activity.",
+  "disclaimer": "Metrics are informational and illustrative only. SSA is not a brokerage, exchange, bank, or investment advisor."
+}
