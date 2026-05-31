@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>SSA Wallet Web3Auth UMD Test</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
+  <style>
+    body{margin:0;background:#050505;color:#f4f4f5;font-family:Inter,system-ui,Arial,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}.card{width:min(100%,560px);border:1px solid #2a2a2e;border-radius:28px;background:#111114;padding:28px;box-shadow:0 30px 80px rgba(0,0,0,.45)}h1{font-size:38px;margin:0 0 14px}.small{color:#a1a1aa;font-size:15px;line-height:1.5}.btn{width:100%;border:none;border-radius:22px;padding:18px 20px;margin:18px 0 12px;background:#facc15;color:#0a0a0a;font-weight:900;font-size:20px}.btn:active{transform:scale(.99)}pre{white-space:pre-wrap;word-break:break-word;background:#050505;border:1px solid #2a2a2e;border-radius:18px;padding:18px;color:#e4e4e7;font-size:13px;line-height:1.45}.ok{color:#86efac}.bad{color:#fda4af}.muted{color:#a1a1aa}.pill{display:inline-block;background:#facc15;color:#111827;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:900;margin-bottom:14px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="pill">SSA WALLET TEST</div>
+    <h1>Web3Auth UMD Test</h1>
+    <p class="small">This avoids the ESM elliptic error by using Web3Auth v9 UMD builds. Upload to GitHub Pages and open from HTTPS.</p>
+    <button id="login" class="btn">Login with SSA Wallet</button>
+    <pre id="log">Loading Web3Auth SDK...</pre>
+  </div>
+
+  <script>
+    const CLIENT_ID = "BOUKvoCqHa4GW_EG2Pnssa3i4g-TM280vCb70tlLfv5Vh5Flj9QYtkjeB8PfQ98CGw35IJROjOLPDQiOvmWEf4U";
+    const POLYGON_CHAIN_CONFIG = {
+      chainNamespace: "eip155",
+      chainId: "0x89",
+      rpcTarget: "https://polygon-rpc.com",
+      displayName: "Polygon Mainnet",
+      blockExplorerUrl: "https://polygonscan.com",
+      ticker: "POL",
+      tickerName: "Polygon Ecosystem Token"
+    };
+
+    let web3auth = null;
+    const logEl = document.getElementById("log");
+    function log(msg, cls){ logEl.className = cls || ""; logEl.textContent = msg; }
+
+    function loadScript(src) {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.async = false;
+        script.onload = () => resolve(src);
+        script.onerror = () => reject(new Error("Could not load " + src));
+        document.head.appendChild(script);
+      });
+    }
+
+    async function loadWeb3AuthSDK() {
+      const stacks = [
+        [
+          "https://cdn.jsdelivr.net/npm/@web3auth/base@9/dist/base.umd.min.js",
+          "https://cdn.jsdelivr.net/npm/@web3auth/ethereum-provider@9/dist/ethereumProvider.umd.min.js",
+          "https://cdn.jsdelivr.net/npm/@web3auth/modal@9/dist/modal.umd.min.js"
+        ],
+        [
+          "https://unpkg.com/@web3auth/base@9/dist/base.umd.min.js",
+          "https://unpkg.com/@web3auth/ethereum-provider@9/dist/ethereumProvider.umd.min.js",
+          "https://unpkg.com/@web3auth/modal@9/dist/modal.umd.min.js"
+        ],
+        [
+          "https://cdn.jsdelivr.net/npm/@web3auth/base@9.7.0/dist/base.umd.min.js",
+          "https://cdn.jsdelivr.net/npm/@web3auth/ethereum-provider@9.7.0/dist/ethereumProvider.umd.min.js",
+          "https://cdn.jsdelivr.net/npm/@web3auth/modal@9.7.0/dist/modal.umd.min.js"
+        ],
+        [
+          "https://unpkg.com/@web3auth/base@9.7.0/dist/base.umd.min.js",
+          "https://unpkg.com/@web3auth/ethereum-provider@9.7.0/dist/ethereumProvider.umd.min.js",
+          "https://unpkg.com/@web3auth/modal@9.7.0/dist/modal.umd.min.js"
+        ]
+      ];
+
+      let lastError = null;
+      for (const stack of stacks) {
+        try {
+          log("Loading SDK stack:\n" + stack.join("\n"), "muted");
+          for (const src of stack) await loadScript(src);
+          const Web3Auth = window.Modal && window.Modal.Web3Auth;
+          const EthereumPrivateKeyProvider = window.EthereumProvider && window.EthereumProvider.EthereumPrivateKeyProvider;
+          if (!Web3Auth) throw new Error("window.Modal.Web3Auth missing");
+          return { Web3Auth, EthereumPrivateKeyProvider, source: stack.join(" | ") };
+        } catch (e) {
+          lastError = e;
+          console.warn(e);
+        }
+      }
+      throw lastError || new Error("All SDK stacks failed");
+    }
+
+    async function initWeb3Auth() {
+      if (web3auth) return web3auth;
+      const { Web3Auth, EthereumPrivateKeyProvider, source } = await loadWeb3AuthSDK();
+      log("SDK loaded. Initializing...\n" + source, "muted");
+
+      const options = {
+        clientId: CLIENT_ID,
+        web3AuthNetwork: "sapphire_mainnet",
+        chainConfig: POLYGON_CHAIN_CONFIG,
+        uiConfig: {
+          appName: "Shop Share Anywhere",
+          mode: "dark",
+          loginMethodsOrder: ["google", "email_passwordless"]
+        }
+      };
+      if (EthereumPrivateKeyProvider) {
+        options.privateKeyProvider = new EthereumPrivateKeyProvider({ config: { chainConfig: POLYGON_CHAIN_CONFIG } });
+      }
+      web3auth = new Web3Auth(options);
+      if (typeof web3auth.initModal === "function") await web3auth.initModal();
+      else if (typeof web3auth.init === "function") await web3auth.init();
+      else throw new Error("No initModal/init method found");
+      return web3auth;
+    }
+
+    async function login() {
+      try {
+        log("Opening Web3Auth login...", "muted");
+        const w3a = await initWeb3Auth();
+        const provider = w3a.provider || await w3a.connect();
+        if (!provider) throw new Error("No provider returned");
+        const ethersProvider = new ethers.BrowserProvider(provider);
+        const signer = await ethersProvider.getSigner();
+        const address = await signer.getAddress();
+        let user = {};
+        try { user = await w3a.getUserInfo(); } catch (_) {}
+        log("SUCCESS\n\nAddress: " + address + "\nEmail: " + (user.email || "not returned") + "\n\nThis Client ID works. Now upload the full SSA index v3 as index.html.", "ok");
+      } catch (e) {
+        log("FAILED\n\n" + (e && e.message ? e.message : e) + "\n\nIf this still fails, check allowed domains and make sure this page is opened from https://jw8490.github.io/... not file:// or content://.", "bad");
+      }
+    }
+
+    document.getElementById("login").addEventListener("click", login);
+    initWeb3Auth().then(() => log("SDK ready. Tap Login with SSA Wallet.", "ok")).catch(e => log("SDK load/init error:\n" + e.message, "bad"));
+  </script>
+</body>
+</html>
