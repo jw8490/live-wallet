@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SSA Web3Auth Polygon Test</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js"></script>
+  <script type="module">
+    (async () => {
+      const sources = [
+        "https://cdn.jsdelivr.net/npm/@web3auth/modal@10.16.0/+esm",
+        "https://esm.sh/@web3auth/modal@10.16.0?bundle",
+        "https://esm.run/@web3auth/modal@10.16.0"
+      ];
+      let lastError = null;
+      for (const src of sources) {
+        try {
+          const mod = await import(src);
+          const Web3Auth = mod.Web3Auth || (mod.default && mod.default.Web3Auth);
+          const WEB3AUTH_NETWORK = mod.WEB3AUTH_NETWORK || { SAPPHIRE_MAINNET: "sapphire_mainnet" };
+          if (!Web3Auth) throw new Error("Web3Auth export missing from " + src);
+          window.SSAWeb3AuthSDK = { Web3Auth, WEB3AUTH_NETWORK, source: src };
+          window.dispatchEvent(new Event("sdk-ready"));
+          return;
+        } catch (err) {
+          lastError = err;
+          console.warn("CDN failed", src, err);
+        }
+      }
+      window.SSAWeb3AuthSDKLoadError = lastError;
+      window.dispatchEvent(new Event("sdk-error"));
+    })();
+  </script>
+  <style>
+    body { margin:0; font-family: system-ui, Arial; background:#050505; color:#fff; display:grid; place-items:center; min-height:100vh; }
+    .card { width:min(92vw,460px); background:#111; border:1px solid #333; border-radius:24px; padding:24px; }
+    button { width:100%; border:0; border-radius:18px; padding:16px; font-weight:800; font-size:18px; background:#facc15; color:#111; }
+    pre { white-space:pre-wrap; word-break:break-word; background:#000; border:1px solid #333; border-radius:14px; padding:14px; color:#d4d4d8; }
+    .small { color:#aaa; font-size:13px; line-height:1.5; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>SSA Wallet Test</h1>
+    <p class="small">This tests MetaMask Embedded Wallets / Web3Auth with your Client ID. Upload this to GitHub Pages and open it from HTTPS.</p>
+    <button id="login">Login with Web3Auth</button>
+    <pre id="out">Ready. Waiting for SDK...</pre>
+  </div>
+  <script>
+    const out = document.getElementById('out');
+    const log = (msg) => out.textContent = typeof msg === 'string' ? msg : JSON.stringify(msg, null, 2);
+    const CLIENT_ID = "BOUKvoCqHa4GW_EG2Pnssa3i4g-TM280vCb70tlLfv5Vh5Flj9QYtkjeB8PfQ98CGw35IJROjOLPDQiOvmWEf4U";
+    let web3auth;
+
+    async function waitForSDK(timeoutMs = 15000) {
+      if (window.SSAWeb3AuthSDK && window.SSAWeb3AuthSDK.Web3Auth) return window.SSAWeb3AuthSDK;
+      return new Promise((resolve, reject) => {
+        const t = setTimeout(() => reject(new Error('SDK did not load. ' + (window.SSAWeb3AuthSDKLoadError?.message || ''))), timeoutMs);
+        window.addEventListener('sdk-ready', () => { clearTimeout(t); resolve(window.SSAWeb3AuthSDK); }, { once:true });
+        window.addEventListener('sdk-error', () => { clearTimeout(t); reject(new Error('SDK did not load. ' + (window.SSAWeb3AuthSDKLoadError?.message || ''))); }, { once:true });
+      });
+    }
+
+    async function start() {
+      try {
+        log('Loading SDK...');
+        const sdk = await waitForSDK();
+        const { Web3Auth, WEB3AUTH_NETWORK } = sdk;
+        log('SDK loaded from:\n' + sdk.source + '\n\nInitializing Web3Auth...');
+        web3auth = new Web3Auth({
+          clientId: CLIENT_ID,
+          web3AuthNetwork: (WEB3AUTH_NETWORK && WEB3AUTH_NETWORK.SAPPHIRE_MAINNET) || 'sapphire_mainnet',
+          uiConfig: { appName: 'Shop Share Anywhere', mode: 'dark', loginMethodsOrder: ['google','email_passwordless'] }
+        });
+        if (typeof web3auth.init === 'function') await web3auth.init();
+        else if (typeof web3auth.initModal === 'function') await web3auth.initModal();
+        else throw new Error('No init/initModal method found');
+        log('Opening login modal...');
+        const provider = web3auth.provider || (typeof web3auth.connect === 'function' ? await web3auth.connect() : null);
+        if (!provider) throw new Error('No provider returned');
+        const ethersProvider = new ethers.BrowserProvider(provider);
+        const signer = await ethersProvider.getSigner();
+        const address = await signer.getAddress();
+        log('SUCCESS\nWallet: ' + address + '\nNetwork: Polygon / EVM');
+      } catch (e) {
+        console.error(e);
+        log('ERROR\n' + (e && e.message ? e.message : String(e)));
+      }
+    }
+    document.getElementById('login').addEventListener('click', start);
+    waitForSDK(15000).then(sdk => log('SDK ready from:\n' + sdk.source)).catch(e => log('SDK load error:\n' + e.message));
+  </script>
+</body>
+</html>
