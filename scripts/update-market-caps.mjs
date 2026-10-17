@@ -151,6 +151,9 @@ for (const id of used) {
 }
 const lastMarketTime = Object.values(entities).map((r) => r.marketTime).filter(Boolean).sort().pop() || null;
 
+const orderedEntities = Object.fromEntries(Object.keys(config.entities).filter((id) => entities[id]).map((id) => [id, entities[id]]));
+failures.sort((a, b) => String(a.id).localeCompare(String(b.id)));
+
 const out = {
   schema: 1,
   generatedAt,
@@ -173,22 +176,36 @@ const out = {
     platformCount: config.platforms.length,
     missing
   },
-  entities,
+  entities: orderedEntities,
   platforms: config.platforms,
   failures
 };
 
-await fs.writeFile(OUT, JSON.stringify(out, null, 2) + "\n");
+// Skip writing (and therefore committing) when nothing but timestamps would change.
+// "generatedAt" therefore means "when the data last changed", not "when it was last checked".
+const VOLATILE_KEYS = new Set(["generatedAt"]);
+// Canonical form: drop volatile keys and sort object keys so fetch order can't cause a diff.
+const canonical = (v) => Array.isArray(v) ? v.map(canonical)
+  : v && typeof v === "object" ? Object.fromEntries(Object.keys(v).filter((k) => !VOLATILE_KEYS.has(k)).sort().map((k) => [k, canonical(v[k])]))
+  : v;
+const comparable = (o) => JSON.stringify(canonical(o));
+const unchanged = previous && comparable(previous) === comparable(out);
 
-// Refresh the inline fallback snapshot in index.html (used if data/market-caps.json can't be loaded).
-try {
-  const html = await fs.readFile(HTML, "utf8");
-  const re = /(<script id="ssa-seed-snapshot" type="application\/json">)[\s\S]*?(<\/script>)/;
-  if (re.test(html)) {
-    const seed = JSON.stringify(out).replace(/</g, "\\u003c");
-    await fs.writeFile(HTML, html.replace(re, (_m, open, close) => open + seed + close)); // function form: "$" in data must not be treated as a pattern
-  }
-} catch (e) { console.warn("Could not refresh inline snapshot:", e.message); }
+if (unchanged) {
+  console.log(`No data changes since ${previous.generatedAt}; leaving data/market-caps.json and index.html untouched.`);
+} else {
+  await fs.writeFile(OUT, JSON.stringify(out, null, 2) + "\n");
+
+  // Refresh the inline fallback snapshot in index.html (used if data/market-caps.json can't be loaded).
+  try {
+    const html = await fs.readFile(HTML, "utf8");
+    const re = /(<script id="ssa-seed-snapshot" type="application\/json">)[\s\S]*?(<\/script>)/;
+    if (re.test(html)) {
+      const seed = JSON.stringify(out).replace(/</g, "\\u003c");
+      await fs.writeFile(HTML, html.replace(re, (_m, open, close) => open + seed + close)); // function form: "$" in data must not be treated as a pattern
+    }
+  } catch (e) { console.warn("Could not refresh inline snapshot:", e.message); }
+}
 
 const fmt = (n) => "$" + (n / 1e12).toFixed(3) + "T";
 console.log(`Ecosystem ${fmt(out.totals.ecosystemUsd)} = public ${fmt(publicUsd)} + private ${fmt(privateUsd)} across ${used.length} entities (${config.platforms.length} platforms)`);

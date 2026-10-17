@@ -762,7 +762,44 @@
       "https://raw.githubusercontent.com/jw8490/live-wallet/main/data/market-caps.json"
     ];
     const MARKET_DATA_REFRESH_MS = 5 * 60_000;
-    const MARKET_DATA_STALE_MS = 4 * 24 * 3600_000; // > 4 days old = flagged stale (covers weekends/holidays)
+    // Staleness is market-session aware: the updater only writes when prices change, so the file's
+    // age says nothing on nights/weekends/holidays. Data is stale only if a US trading session has been
+    // open for over an hour and the newest quote predates that session.
+    const NYSE_HOLIDAYS = new Set([
+      "2026-01-01","2026-01-19","2026-02-16","2026-04-03","2026-05-25","2026-06-19","2026-07-03","2026-09-07","2026-11-26","2026-12-25",
+      "2027-01-01","2027-01-18","2027-02-15","2027-03-26","2027-05-31","2027-06-18","2027-07-05","2027-09-06","2027-11-25","2027-12-24"
+    ]);
+    const SESSION_GRACE_MINUTES_AFTER_OPEN = 60; // open 9:30 ET + 60 min; the Action runs every 30 min
+
+    function nyParts(date) {
+      const f = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
+      const o = Object.fromEntries(f.formatToParts(date).map((x) => [x.type, x.value]));
+      return { ymd: `${o.year}-${o.month}-${o.day}`, minutes: Number(o.hour) * 60 + Number(o.minute) };
+    }
+
+    function isTradingDay(ymd) {
+      const wd = new Date(ymd + "T12:00:00Z").getUTCDay();
+      return wd !== 0 && wd !== 6 && !NYSE_HOLIDAYS.has(ymd);
+    }
+
+    // Latest New York trading date whose session should already be reflected in the data.
+    function expectedSessionDate(now = new Date()) {
+      const today = nyParts(now);
+      const d = new Date(today.ymd + "T12:00:00Z");
+      const ymdOf = (x) => x.toISOString().slice(0, 10);
+      if (!(isTradingDay(ymdOf(d)) && today.minutes >= 9 * 60 + 30 + SESSION_GRACE_MINUTES_AFTER_OPEN)) {
+        d.setUTCDate(d.getUTCDate() - 1);
+      }
+      for (let i = 0; i < 10 && !isTradingDay(ymdOf(d)); i++) d.setUTCDate(d.getUTCDate() - 1);
+      return ymdOf(d);
+    }
+
+    function isMarketDataStale(data, now = new Date()) {
+      const asOf = data?.marketDataAsOf || data?.generatedAt;
+      const t = new Date(asOf);
+      if (!asOf || isNaN(t)) return true;
+      return nyParts(t).ymd < expectedSessionDate(now);
+    }
 
     let marketData = null;          // parsed market-caps.json
     let marketDataOrigin = "";      // where it came from
@@ -851,8 +888,9 @@
       let local = null;
       try { local = await fetchMarketJson(MARKET_DATA_URLS[0]); applied = applyMarketData(local, "site data file") || applied; }
       catch (e) { console.info("Local market data unavailable:", e.message); }
-      const localAge = local ? Date.now() - new Date(local.generatedAt).getTime() : Infinity;
-      if (localAge > 2 * 3600_000 && location.protocol.startsWith("http")) {
+      // Only fall back to the raw GitHub copy when the deployed file is missing or market-stale
+      // (e.g. Pages hasn't redeployed yet); a file that is merely old on a weekend is fine.
+      if ((!local || isMarketDataStale(local)) && location.protocol.startsWith("http")) {
         try { const remote = await fetchMarketJson(MARKET_DATA_URLS[1]); applied = applyMarketData(remote, "GitHub (raw)") || applied; }
         catch (e) { console.info("Remote market data unavailable:", e.message); }
       }
@@ -885,8 +923,7 @@
       const t = marketData.totals || {};
       const change = t.publicDailyChangePct;
       const asOf = marketData.marketDataAsOf || marketData.generatedAt;
-      const age = Date.now() - new Date(marketData.generatedAt).getTime();
-      const stale = !Number.isFinite(age) || age > MARKET_DATA_STALE_MS;
+      const stale = isMarketDataStale(marketData);
 
       if (capEl) capEl.textContent = fmtUsdCompact(t.ecosystemUsd, 3);
       if (marketCapEl) marketCapEl.textContent = fmtUsdCompact(t.ecosystemUsd, 2);
@@ -905,7 +942,7 @@
       if (publicEl) publicEl.textContent = fmtUsdCompact(t.publicUsd, 3);
       if (publicDeltaEl) publicDeltaEl.textContent = `+ ${fmtUsdCompact(t.privateUsd)} private (last reported)`;
       if (lastSyncEl) lastSyncEl.textContent = "Prices as of " + fmtDate(asOf);
-      if (statusEl) statusEl.textContent = `Updated ${fmtDate(marketData.generatedAt)} · ${marketDataOrigin}` +
+      if (statusEl) statusEl.textContent = `Data last changed ${fmtDate(marketData.generatedAt)} · ${marketDataOrigin}` +
         ((marketData.failures || []).some((f) => f.error) ? " · some quotes stale" : "");
       if (syncLabelEl) syncLabelEl.textContent = stale ? "MARKET DATA STALE" : "REAL MARKET DATA";
       if (syncDotEl) syncDotEl.className = "w-2 h-2 rounded-full " + (stale ? "bg-yellow-400" : "bg-emerald-400 live-dot");
@@ -3259,6 +3296,8 @@
       getMarketData: () => marketData,
       getTokenInfo: () => ({ ...tokenInfo }),
       getTokenMarket: () => ({ ...tokenMarket }),
+      expectedSessionDate,
+      isMarketDataStale,
       sellHolding,
       disconnectLiveWallet,
       signOutLocal
