@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>SSA Smart Basket • BluAre Wallet Execution</title>
+  <title>SSA Smart Basket • Real market data + live BNB wallet</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -246,7 +246,7 @@
             Sign in to unlock live SSA wallet
           </h2>
           <p class="text-sm text-zinc-400 mt-2">
-            Local device account only. Wallet data stays encrypted on this device. Connect a BNB Smart Chain wallet after sign-in for live BluAre balances.
+            Local device account only — stored in this browser, not on a server. Connect a BNB Smart Chain wallet after sign-in for live on-chain balances.
           </p>
         </div>
         <div class="hidden md:flex w-14 h-14 rounded-3xl bg-yellow-400 items-center justify-center text-zinc-950 text-3xl font-black">
@@ -281,6 +281,10 @@
           class="w-full py-4 bg-yellow-400 hover:bg-yellow-300 active:bg-yellow-500 transition-all text-zinc-950 font-semibold rounded-3xl flex items-center justify-center gap-x-2 text-base">
           <i class="fa-solid fa-fingerprint"></i>
           <span>Enter SSA ecosystem</span>
+        </button>
+        <button type="button" onclick="skipSignIn()"
+          class="w-full py-2 text-xs text-zinc-400 hover:text-zinc-200 underline">
+          Just view live market data
         </button>
       </form>
     </div>
@@ -330,7 +334,7 @@
   <div class="max-w-5xl mx-auto px-5 pt-10 pb-8 text-center">
     <div class="inline-flex items-center gap-x-2 px-4 py-1 bg-zinc-900 rounded-full mb-6 border border-zinc-800">
       <div class="demo-badge">LIVE</div>
-      <span class="text-xs text-zinc-400">v1.6 • BluAre wallet execution</span>
+      <span class="text-xs text-zinc-400">v2.0 • Real market data · on-chain wallet</span>
     </div>
     <h1 class="text-6xl sm:text-7xl font-display font-bold tracking-tighter leading-none mb-4">
       One-click exposure.<br />
@@ -355,7 +359,7 @@
       <span>SSA Wallet · BNB Smart Chain · BluAre direct payout</span>
     </div>
     <div class="mt-4 mx-auto max-w-2xl rounded-2xl border border-yellow-400/20 bg-yellow-400/5 px-4 py-3 text-xs text-yellow-100">
-      <strong class="text-yellow-300">Live Production Path</strong> · Index tracking layer. Real BluAre balance reads. Live basket allocations drift with platform momentum. Not financial advice.
+      <strong class="text-yellow-300">Real data</strong> · Public market caps from Nasdaq &amp; Yahoo Finance, refreshed every 30 min during US market hours. Private companies show their last reported valuation. Wallet balances are read live from BNB Smart Chain. Basket allocations are a simulation — nothing is bought. Not financial advice.
     </div>
   </div>
 
@@ -371,29 +375,29 @@
               <i class="fa-solid fa-arrow-trend-up mr-1"></i>
               <span id="momentum-val">0.00</span>
             </div>
-            <div class="text-xs text-zinc-500">24h</div>
+            <div class="text-xs text-zinc-500">1d · public cos.</div>
           </div>
         </div>
         <div class="text-center sm:text-left border-t sm:border-t-0 sm:border-l border-zinc-800 pt-4 sm:pt-0 sm:pl-6">
           <div class="text-xs uppercase tracking-[1px] text-zinc-500 mb-1">TRACKED PLATFORMS</div>
           <div class="flex items-baseline justify-center sm:justify-start gap-x-3">
             <div id="tracked-platforms-stat" class="metric text-white">35</div>
-            <div class="text-sm text-emerald-400 font-medium">SSA index</div>
+            <div class="text-sm text-emerald-400 font-medium">platforms</div>
           </div>
-          <div class="text-xs text-zinc-500 mt-1">Expanded SSA ecosystem</div>
+          <div id="tracked-platforms-sub" class="text-xs text-zinc-500 mt-1">Loading companies…</div>
         </div>
         <div class="text-center sm:text-left border-t sm:border-t-0 sm:border-l border-zinc-800 pt-4 sm:pt-0 sm:pl-6">
-          <div class="text-xs uppercase tracking-[1px] text-zinc-500 mb-1">ACTIVE USERS</div>
-          <div id="active-users-stat" class="metric text-white">18.6m</div>
-          <div id="active-users-delta" class="text-xs text-emerald-400 mt-1">Sum of platform engagement</div>
+          <div class="text-xs uppercase tracking-[1px] text-zinc-500 mb-1">PUBLIC MARKET CAP</div>
+          <div id="active-users-stat" class="metric text-white">—</div>
+          <div id="active-users-delta" class="text-xs text-zinc-400 mt-1">+ private (last reported)</div>
         </div>
         <div class="text-center sm:text-left border-t sm:border-t-0 sm:border-l border-zinc-800 pt-4 sm:pt-0 sm:pl-6 flex flex-col justify-center">
-          <div class="flex items-center justify-center sm:justify-start gap-x-2 text-xs text-emerald-400">
-            <div class="w-2 h-2 bg-emerald-400 rounded-full live-dot"></div>
-            <span class="font-semibold">LIVE SYNC ACTIVE</span>
+          <div id="sync-wrap" class="flex items-center justify-center sm:justify-start gap-x-2 text-xs text-emerald-400">
+            <div id="sync-dot" class="w-2 h-2 bg-zinc-500 rounded-full"></div>
+            <span id="sync-label" class="font-semibold">LOADING MARKET DATA</span>
           </div>
-          <div id="last-sync" class="text-xs text-zinc-500 mt-1">Last synced just now</div>
-          <div id="marketplace-status" class="text-[10px] text-zinc-600 mt-0.5">Platform-derived index</div>
+          <div id="last-sync" class="text-xs text-zinc-500 mt-1">Prices as of —</div>
+          <div id="marketplace-status" class="text-[10px] text-zinc-600 mt-0.5">—</div>
         </div>
       </div>
     </div>
@@ -407,13 +411,13 @@
           <div class="text-xs uppercase tracking-[0.22em] text-yellow-300 font-semibold mb-2">SSA Index Methodology</div>
           <h2 class="font-display text-3xl md:text-4xl tracking-tight text-white">What is the SSA Ecosystem Cap?</h2>
           <p class="mt-3 text-sm md:text-base text-zinc-300 leading-relaxed">
-            The SSA Ecosystem Cap is the live sum of the 35 tracked platform valuations. Active Users is the summed engagement proxy across every platform in the index. Both metrics drift with real-time momentum.
+            The SSA Ecosystem Cap is the combined value of the companies that own the 35 tracked platforms, counting each company once: real market caps for public companies plus the latest publicly reported valuation for private ones. Instagram and Facebook count once as Meta; YouTube is Alphabet; Twitch is Amazon; Grok, Grokipedia and X are SpaceX (which acquired xAI); ChatGPT is OpenAI.
           </p>
           <div class="mt-4 flex flex-wrap gap-2 text-xs">
-            <span class="method-chip rounded-full px-3 py-1">Market cap signals</span>
-            <span class="method-chip rounded-full px-3 py-1">24h momentum</span>
-            <span class="method-chip rounded-full px-3 py-1">Platform engagement sum</span>
-            <span class="method-chip rounded-full px-3 py-1">Tracked platform count</span>
+            <span class="method-chip rounded-full px-3 py-1">Real market caps</span>
+            <span class="method-chip rounded-full px-3 py-1">Daily % change</span>
+            <span class="method-chip rounded-full px-3 py-1">De-duplicated by parent</span>
+            <span class="method-chip rounded-full px-3 py-1">Sourced private valuations</span>
           </div>
         </div>
         <div class="shrink-0">
@@ -435,7 +439,7 @@
       <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-5 px-1">
         <div>
           <div class="font-display text-2xl font-semibold tracking-tight">Top Consumer Platforms</div>
-          <div class="text-sm text-zinc-500 mt-0.5">Search, filter, then tap any platform to add to your basket</div>
+          <div class="text-sm text-zinc-500 mt-0.5">Real market caps &amp; daily change. Tap any platform to add it to your (simulated) basket</div>
         </div>
         <div class="text-xs text-zinc-500 bg-zinc-900 px-3 py-1.5 rounded-full border border-zinc-800 w-fit">
           <span id="platform-count">15 featured</span>
@@ -535,7 +539,7 @@
           <div id="marketplace-cap" class="font-display text-3xl font-semibold tabular-nums">—</div>
         </div>
       </div>
-      <p class="text-lg text-zinc-400 mt-1">Live shopping basket exposure to the top consumer economy platforms.</p>
+      <p class="text-lg text-zinc-400 mt-1">Simulated basket exposure to the top consumer economy platforms, valued with real prices.</p>
       <div id="progress-bar" class="flex flex-wrap items-center justify-center gap-2 mb-8"></div>
       <div id="flow-container" class="max-w-[820px] mx-auto"></div>
     </div>
@@ -556,23 +560,41 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-sm">
         <div class="market-stat p-4">
           <div class="text-yellow-300 font-semibold mb-1">Ecosystem Cap</div>
-          <div class="text-zinc-400">Live sum of the 35 tracked platform valuations with momentum drift.</div>
+          <div class="text-zinc-400">Sum of the owning companies, each counted once: public market caps + last reported private valuations.</div>
         </div>
         <div class="market-stat p-4">
-          <div class="text-yellow-300 font-semibold mb-1">24h Momentum</div>
-          <div class="text-zinc-400">Weighted daily movement across the full platform index.</div>
+          <div class="text-yellow-300 font-semibold mb-1">Daily change</div>
+          <div class="text-zinc-400">Real change of the public companies' combined market cap vs. the previous close. Private valuations have no daily price.</div>
         </div>
         <div class="market-stat p-4">
-          <div class="text-yellow-300 font-semibold mb-1">Active Users</div>
-          <div class="text-zinc-400">Sum of engagement proxies from every platform in the index.</div>
+          <div class="text-yellow-300 font-semibold mb-1">Data refresh</div>
+          <div class="text-zinc-400">A GitHub Action fetches quotes every 30 min on weekdays during US market hours, plus daily. The page re-checks every 5 min.</div>
         </div>
         <div class="market-stat p-4">
-          <div class="text-yellow-300 font-semibold mb-1">Live Allocations</div>
-          <div class="text-zinc-400">Basket values update every 4s from platform momentum signals.</div>
+          <div class="text-yellow-300 font-semibold mb-1">Basket</div>
+          <div class="text-zinc-400">Simulated. Holdings follow the real share-price change of their owner since allocation. No securities are bought.</div>
         </div>
       </div>
       <div class="mt-5 rounded-2xl border border-yellow-400/20 bg-yellow-400/5 px-4 py-3 text-xs text-zinc-300">
-        <strong class="text-yellow-300">Data note</strong> · Public market caps are approximate. Private valuations (OpenAI, xAI, Polymarket, etc.) are estimates. Basket allocations are live index-tracking simulations until a funded settlement contract is connected.
+        <strong class="text-yellow-300">Data note</strong> · Public market caps are total equity value across share classes as reported by Nasdaq at the last trade (delayed, not tick-by-tick). Private valuations are the latest publicly reported figures and can be months or years old — each one links to its source. The basket, PayPal flow and SSA Proceeds are simulations. Not financial advice.
+      </div>
+      <div class="mt-6">
+        <div class="flex items-center justify-between mb-2">
+          <div class="text-xs uppercase tracking-[0.2em] text-zinc-500 font-semibold">Companies in the Ecosystem Cap</div>
+          <a href="data/market-caps.json" target="_blank" class="text-[11px] text-yellow-300 underline">raw data</a>
+        </div>
+        <div class="overflow-x-auto rounded-2xl border border-zinc-800 bg-zinc-950/60 px-4">
+          <table class="w-full text-xs">
+            <thead><tr class="text-[10px] uppercase tracking-wider text-zinc-500"><th class="py-2 text-left">Company · platforms</th><th class="py-2 text-right pr-3">Value</th><th class="py-2 text-left">Detail</th></tr></thead>
+            <tbody id="ssa-sources-table"><tr><td class="py-3 text-zinc-500" colspan="3">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="mt-6">
+        <div class="text-xs uppercase tracking-[0.2em] text-zinc-500 font-semibold mb-2">BluAre token · live on-chain facts</div>
+        <div id="bluare-token-facts" class="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-4">
+          <div class="text-xs text-zinc-500">Reading token contract from BNB Smart Chain…</div>
+        </div>
       </div>
     </div>
   </section>
@@ -595,7 +617,7 @@
         Jacob Wieck · Premium · Indio, CA ·
         <a href="https://jw8490.github.io" class="hover:text-yellow-400 transition-colors">Portfolio</a>
       </div>
-      <div class="mt-3 text-[10px] text-zinc-600">Production wallet · BNB Smart Chain · SSA Proceeds → BluAre direct settlement</div>
+      <div class="mt-3 text-[10px] text-zinc-600">Market data: Nasdaq &amp; Yahoo Finance (public), latest reported valuations (private) · Wallet: live BNB Smart Chain reads, user-signed transactions only · Not financial advice</div>
     </div>
   </footer>
 
@@ -653,19 +675,22 @@
     </div>
   </div>
 
+  <!-- Fallback snapshot, refreshed by scripts/update-market-caps.mjs. Used only if data/market-caps.json can't be loaded. -->
+  <script id="ssa-seed-snapshot" type="application/json">{"schema":1,"generatedAt":"2026-10-17T09:59:49.780Z","marketDataAsOf":"2026-10-16T20:04:18.000Z","sources":{"marketCap":"Nasdaq quote API (api.nasdaq.com/api/quote/{SYMBOL}/summary) — total market cap across share classes","price":"Yahoo Finance chart API (query1.finance.yahoo.com/v8/finance/chart/{SYMBOL}) — last price and daily % change","private":"Latest publicly reported valuation, see each entity's source URL and asOf date","fx":"Yahoo Finance chart API ({CCY}=X)"},"fx":{"MXN":18.479},"totals":{"ecosystemUsd":20015268248471,"publicUsd":19033478248471,"privateUsd":981790000000,"publicDailyChangePct":-1.4081955429697257,"entityCount":29,"publicEntityCount":21,"privateEntityCount":8,"platformCount":35,"missing":[]},"entities":{"AMZN":{"id":"AMZN","name":"Amazon.com, Inc.","type":"public","symbol":"AMZN","note":null,"price":250,"previousClose":254.76,"changePct":-1.868,"currency":"USD","marketTime":"2026-10-16T20:00:01.000Z","exchange":"NasdaqGS","marketCapUsd":2696578393000,"marketCapSource":"Nasdaq quote API (market cap)","priceSource":"Yahoo Finance chart API","sharesImplied":10786313572,"stale":false},"BBY":{"id":"BBY","name":"Best Buy Co., Inc.","type":"public","symbol":"BBY","note":null,"price":92.63,"previousClose":94.17,"changePct":-1.635,"currency":"USD","marketTime":"2026-10-16T20:00:02.000Z","exchange":"NYSE","marketCapUsd":19427076666,"marketCapSource":"Nasdaq quote API (market cap)","priceSource":"Yahoo Finance chart API","sharesImplied":209727698,"stale":false},"AAPL":{"id":"AAPL","name":"Apple Inc.","type":"public","symbol":"AAPL","note":null,"price":343.46,"previousClose":342,"changePct":0.427,"currency":"USD","marketTime":"2026-10-16T20:00:01.000Z","exchange":"NasdaqGS","marketCapUsd":5012517062800,"marketCapSource":"Nasdaq quote API (market cap)","priceSource":"Yahoo Finance chart API","sharesImplied":14594180000,"stale":false},"COIN":{"id":"COIN","name":"Coinbase Global, Inc.","type":"public","symbol":"COIN","note":null,"price":173.16,"previousClose":183.81,"changePct":-5.794,"currency":"USD","marketTime":"2026-10-16T20:00:01.000Z","exchange":"NasdaqGS","marketCapUsd":45686001587,"marketCapSource":"Nasdaq quote API (market cap)","priceSource":"Yahoo Finance chart API","sharesImplied":263836923,"stale":false},"COST":{"id":"COST","name":"Costco Wholesale Corp.","type":"public","symbol":"COST","note":null,"price":989.11,"previousClose":978.01,"changePct":1.135,"currency":"USD","marketTime":"2026-10-16T20:00:02.000Z","exchange":"NasdaqGS","marketCapUsd":438303670389,"marketCapSource":"Nasdaq quote API (market cap)","priceSource":"Yahoo Finance chart API","sharesImplied":443129349,"stale":false},"META":{"id":"META","name":"Meta Platforms, Inc.","type":"public","symbol":"META","note":null,"price":709.325,"previousClose":736.72,"changePct":-3.718,"currency":"USD","marketTime":"2026-10-16T20:00:01.000Z","exchange":"NasdaqGS","marketCapUsd":1807009853048,"marketCapSource":"Nasdaq quote API (market cap)","priceSource":"Yahoo Finance chart API","sharesImplied":2547506225,"stale":false},"EBAY":{"id":"EBAY","name":"eBay Inc.","type":"public","symbol":"EBAY","note":null,"price":120.28,"previousClose":122.91,"changePct":-2.14,"currency":"USD","marketTime":"2026-10-16T20:00:01.000Z","exchange":"NasdaqGS","marketCapUsd":53524600000,"marketCapSource":"Nasdaq quote API (market cap)","priceSource":"Yahoo Finance chart API","sharesImplied":445000000,"stale":false},"ETSY":{"id":"ETSY","name":"Etsy, Inc.","type":"public","symbol":"ETSY","note":null,"price":85.14,"previousClose":89.18,"changePct":-4.53,"currency":"USD","marketTime":"2026-10-16T20:00:03.000Z","exchange":"NYSE","marketCapUsd":7814298025,"marketCapSource":"Nasdaq quote API (market cap)","priceSource":"Yahoo Finance chart API","sharesImplied":91781748,"stale":false},"GME":{"id":"GME","name":"GameStop Corp.","type":"public","symbol":"GME","note":null,"price":26.81,"previousClose":28.02,"changePct":-4.318,"currency":"USD","marketTime":"2026-10-16T20:00:02.000Z","exchange":"NYSE","marketCapUsd":13525671542,"marketCapSource":"Nasdaq quote API (market cap)","priceSource":"Yahoo Finance chart API","sharesImplied":504500990,"stale":false},"GOOGL":{"id":"GOOGL","name":"Alphabet Inc.","type":"public","symbol":"GOOGL","note":"Market cap covers all share classes (A, B, C).","price":340.59,"previousClose":349.22,"changePct":-2.471,"currency":"USD","marketTime":"2026-10-16T20:00:01.000Z","exchange":"NasdaqGS","marketCapUsd":4165415700000,"marketCapSource":"Nasdaq quote API (market cap)","priceSource":"Yahoo Finance chart API","sharesImplied":12230000000,"stale":false},"KSS":{"id":"KSS","name":"Kohl's Corp.","type":"public","symbol":"KSS","note":null,"price":21.59,"previousClose":22.41,"changePct":-3.659,"currency":"USD","marketTime":"2026-10-16T20:00:02.000Z","exchange":"NYSE","marketCapUsd":2447797448,"marketCapSource":"Nasdaq quote API (market cap)","priceSource":"Yahoo Finance chart API","sharesImplied":113376445,"stale":false},"HOOD":{"id":"HOOD","name":"Robinhood Markets, Inc.","type":"public","symbol":"HOOD","note":null,"price":98.87,"previousClose":103.99,"changePct":-4.924,"currency":"USD","marketTime":"2026-10-16T20:00:01.000Z","exchange":"NasdaqGS","marketCapUsd":88892264332,"marketCapSource":"Nasdaq quote API (market cap)","priceSource":"Yahoo Finance chart API","sharesImplied":899082273,"stale":false},"PINS":{"id":"PINS","name":"Pinterest, Inc.","type":"public","symbol":"PINS","note":null,"price":21.91,"previousClose":22.71,"changePct":-3.523,"currency":"USD","marketTime":"2026-10-16T20:04:18.000Z","exchange":"NYSE","marketCapUsd":12407918422,"marketCapSource":"Nasdaq quote API (market cap)","priceSource":"Yahoo Finance chart API","sharesImplied":566313027,"stale":false},"SBUX":{"id":"SBUX","name":"Starbucks Corp.","type":"public","symbol":"SBUX","note":null,"price":97.52,"previousClose":96.88,"changePct":0.661,"currency":"USD","marketTime":"2026-10-16T20:00:00.000Z","exchange":"NasdaqGS","marketCapUsd":111172800000,"marketCapSource":"Nasdaq quote API (market cap)","priceSource":"Yahoo Finance chart API","sharesImplied":1140000000,"stale":false},"TSLA":{"id":"TSLA","name":"Tesla, Inc.","type":"public","symbol":"TSLA","note":null,"price":354.72,"previousClose":362.44,"changePct":-2.13,"currency":"USD","marketTime":"2026-10-16T20:00:01.000Z","exchange":"NasdaqGS","marketCapUsd":1400983451600,"marketCapSource":"Nasdaq quote API (market cap)","priceSource":"Yahoo Finance chart API","sharesImplied":3949547394,"stale":false},"UBER":{"id":"UBER","name":"Uber Technologies, Inc.","type":"public","symbol":"UBER","note":null,"price":70.35,"previousClose":71.27,"changePct":-1.291,"currency":"USD","marketTime":"2026-10-16T20:00:03.000Z","exchange":"NYSE","marketCapUsd":143694104512,"marketCapSource":"Nasdaq quote API (market cap)","priceSource":"Yahoo Finance chart API","sharesImplied":2042560121,"stale":false},"TGT":{"id":"TGT","name":"Target Corp.","type":"public","symbol":"TGT","note":null,"price":154.26,"previousClose":156.63,"changePct":-1.513,"currency":"USD","marketTime":"2026-10-16T20:03:23.000Z","exchange":"NYSE","marketCapUsd":70079814495,"marketCapSource":"Nasdaq quote API (market cap)","priceSource":"Yahoo Finance chart API","sharesImplied":454296736,"stale":false},"CHDRAUIB":{"id":"CHDRAUIB","name":"Grupo Comercial Chedraui, S.A.B. de C.V.","type":"public","symbol":"CHDRAUIB.MX","note":"Listed in Mexico (BMV). Converted to USD at the live USD/MXN rate. Owner of Smart & Final.","price":89.7,"previousClose":88.72,"changePct":1.105,"currency":"MXN","marketTime":"2026-10-16T19:59:35.000Z","exchange":"Mexico","marketCapUsd":4656303263,"marketCapSource":"Yahoo price x 959,240,000 shares (https://stockanalysis.com/quote/bmv/CHDRAUI.B/statistics/, 2026-10-16) / USDMXN 18.479","priceSource":"Yahoo Finance chart API","sharesImplied":959240000,"stale":false},"SPCX":{"id":"SPCX","name":"Space Exploration Technologies Corp. (SpaceX)","type":"public","symbol":"SPCX","note":"Public since its June 12, 2026 IPO. SpaceX acquired xAI (which already owned X) on Feb 2, 2026, so Grok, Grokipedia and X are part of SpaceX.","price":146.03,"previousClose":148.62,"changePct":-1.743,"currency":"USD","marketTime":"2026-10-16T20:00:00.000Z","exchange":"NasdaqGS","marketCapUsd":1982039141899,"marketCapSource":"Nasdaq quote API (market cap)","priceSource":"Yahoo Finance chart API","sharesImplied":13572821625,"stale":false},"WMT":{"id":"WMT","name":"Walmart Inc.","type":"public","symbol":"WMT","note":null,"price":118.81,"previousClose":117.87,"changePct":0.797,"currency":"USD","marketTime":"2026-10-16T20:00:00.000Z","exchange":"NasdaqGS","marketCapUsd":942608390893,"marketCapSource":"Nasdaq quote API (market cap)","priceSource":"Yahoo Finance chart API","sharesImplied":7933746241,"stale":false},"W":{"id":"W","name":"Wayfair Inc.","type":"public","symbol":"W","note":null,"price":107.28,"previousClose":111.93,"changePct":-4.154,"currency":"USD","marketTime":"2026-10-16T20:00:03.000Z","exchange":"NYSE","marketCapUsd":14693934550,"marketCapSource":"Nasdaq quote API (market cap)","priceSource":"Yahoo Finance chart API","sharesImplied":136968070,"stale":false},"OPENAI":{"id":"OPENAI","name":"OpenAI","type":"private","valuationUsd":852000000000,"asOf":"2026-03-31","basis":"Post-money valuation, $122B funding round (closed)","source":"https://openai.com/index/accelerating-the-next-phase-ai/","note":"A ~$1.43T round has been reported (PitchBook, Oct 12, 2026) but not confirmed as closed."},"EPIC":{"id":"EPIC","name":"Epic Games","type":"private","valuationUsd":22500000000,"asOf":"2024-02-07","basis":"Valuation at Disney's $1.5B equity investment (last disclosed primary round)","source":"https://stockanalysis.com/private/epic-games/valuation/","note":"Secondary-market marks in Oct 2026 are much lower (Forge implies ~$12.5B)."},"KALSHI":{"id":"KALSHI","name":"Kalshi","type":"private","valuationUsd":40000000000,"asOf":"2026-09-30","basis":"Reported valuation of new ~$1B round (reported as finalizing)","source":"https://www.bloomberg.com/news/articles/2026-09-30/kalshi-finalizing-new-funding-at-40-billion-value-ahead-of-ipo","note":"Last company-confirmed round: $22B Series F, May 7, 2026 (news.kalshi.com)."},"KRAKEN":{"id":"KRAKEN","name":"Payward, Inc. (Kraken)","type":"private","valuationUsd":21000000000,"asOf":"2026-09-10","basis":"Valuation at Nasdaq's strategic investment","source":"https://www.bloomberg.com/news/articles/2026-09-10/nasdaq-invests-in-kraken-parent-payward-at-21-billion-valuation","note":"IPO reported delayed to Q2 2027 at the earliest."},"PERPLEXITY":{"id":"PERPLEXITY","name":"Perplexity AI","type":"private","valuationUsd":20390000000,"asOf":"2025-09-26","basis":"Last confirmed round (Series E-6)","source":"https://stockanalysis.com/private/perplexity/valuation/","note":"Talks at $30B+ reported Aug 2026 (Reuters/The Information); not confirmed."},"POLYMARKET":{"id":"POLYMARKET","name":"Polymarket","type":"private","valuationUsd":21000000000,"asOf":"2026-08-31","basis":"Post-money valuation, $1B round led by 1789 Capital","source":"https://www.bloomberg.com/news/articles/2026-08-31/polymarket-funding-round-led-by-1789-values-firm-at-21-billion","note":null},"STOCKX":{"id":"STOCKX","name":"StockX","type":"private","valuationUsd":3800000000,"asOf":"2021-04-08","basis":"Last disclosed primary funding round","source":"https://www.cnbc.com/2021/04/08/sneaker-reseller-stockxs-valuation-jumps-to-3point8-billion-.html","note":"Stale. Secondary-market estimates in 2026 are ~70% lower (~$1.1B, Caplight)."},"WEATHERCO":{"id":"WEATHERCO","name":"The Weather Company (Francisco Partners)","type":"private","valuationUsd":1100000000,"asOf":"2024-02-01","basis":"Reported acquisition price from IBM (incl. deferred/contingent consideration)","source":"https://www.franciscopartners.com/media/francisco-partners-completes-acquisition-of-the-weather-company","note":null}},"platforms":[{"id":1,"name":"Amazon","label":"AMZN","entity":"AMZN","relation":"company","category":"commerce","exposure":14.2,"icon":"🛒","featured":true},{"id":2,"name":"Apple Store","label":"AAPL","entity":"AAPL","relation":"product","category":"commerce","exposure":13.8,"icon":"🍎","featured":true},{"id":3,"name":"Best Buy","label":"BBY","entity":"BBY","relation":"company","category":"commerce","exposure":7.9,"icon":"📺","featured":true},{"id":4,"name":"ChatGPT","label":"OpenAI","entity":"OPENAI","relation":"product","category":"ai","exposure":11.6,"icon":"🤖","featured":true},{"id":5,"name":"Coinbase","label":"COIN","entity":"COIN","relation":"company","category":"finance","exposure":10.3,"icon":"💠","featured":true},{"id":6,"name":"Costco","label":"COST","entity":"COST","relation":"company","category":"commerce","exposure":9.1,"icon":"🧺","featured":true},{"id":7,"name":"eBay","label":"EBAY","entity":"EBAY","relation":"company","category":"commerce","exposure":6.7,"icon":"📦","featured":true},{"id":8,"name":"Epic Games","label":"Private","entity":"EPIC","relation":"company","category":"social","exposure":8.4,"icon":"🎮","featured":true},{"id":9,"name":"Etsy","label":"ETSY","entity":"ETSY","relation":"company","category":"commerce","exposure":7.4,"icon":"🧵","featured":true},{"id":10,"name":"Facebook","label":"META","entity":"META","relation":"product","category":"social","exposure":10.9,"icon":"📘","featured":true},{"id":11,"name":"GameStop","label":"GME","entity":"GME","relation":"company","category":"commerce","exposure":6.8,"icon":"🕹️","featured":true},{"id":12,"name":"Google","label":"GOOGL","entity":"GOOGL","relation":"company","category":"ai","exposure":11,"icon":"🔍","featured":true},{"id":13,"name":"Grok","label":"SPCX","entity":"SPCX","relation":"product","category":"ai","exposure":12.1,"icon":"🧠","featured":true},{"id":14,"name":"Grokipedia","label":"SPCX","entity":"SPCX","relation":"product","category":"ai","exposure":8.2,"icon":"📚","featured":true},{"id":15,"name":"Instagram","label":"META","entity":"META","relation":"subsidiary","category":"social","exposure":10.1,"icon":"📸","featured":true},{"id":16,"name":"Kalshi","label":"Private","entity":"KALSHI","relation":"company","category":"finance","exposure":7.2,"icon":"📊","featured":false},{"id":17,"name":"Kraken","label":"Private","entity":"KRAKEN","relation":"company","category":"finance","exposure":8,"icon":"🦑","featured":false},{"id":18,"name":"Kohls","label":"KSS","entity":"KSS","relation":"company","category":"commerce","exposure":6.5,"icon":"👕","featured":false},{"id":19,"name":"Perplexity","label":"Private","entity":"PERPLEXITY","relation":"company","category":"ai","exposure":9.5,"icon":"✨","featured":false},{"id":20,"name":"Pinterest","label":"PINS","entity":"PINS","relation":"company","category":"social","exposure":7.1,"icon":"📌","featured":false},{"id":21,"name":"Polymarket","label":"Private","entity":"POLYMARKET","relation":"company","category":"finance","exposure":11.2,"icon":"📈","featured":false},{"id":22,"name":"Robinhood","label":"HOOD","entity":"HOOD","relation":"company","category":"finance","exposure":8.9,"icon":"📱","featured":false},{"id":23,"name":"Smart & Final","label":"CHDRAUIB","entity":"CHDRAUIB","relation":"subsidiary","category":"commerce","exposure":6.9,"icon":"🛒","featured":false},{"id":24,"name":"Starbucks","label":"SBUX","entity":"SBUX","relation":"company","category":"commerce","exposure":8.1,"icon":"☕","featured":false},{"id":25,"name":"SpaceXAI","label":"SPCX","entity":"SPCX","relation":"company","category":"ai","exposure":10.5,"icon":"🚀","featured":false},{"id":26,"name":"StockX","label":"Private","entity":"STOCKX","relation":"company","category":"commerce","exposure":7.7,"icon":"👟","featured":false},{"id":27,"name":"Target","label":"TGT","entity":"TGT","relation":"company","category":"commerce","exposure":7.1,"icon":"🎯","featured":false},{"id":28,"name":"Twitch","label":"AMZN","entity":"AMZN","relation":"subsidiary","category":"social","exposure":8.3,"icon":"🎥","featured":false},{"id":29,"name":"Tesla","label":"TSLA","entity":"TSLA","relation":"company","category":"commerce","exposure":11.3,"icon":"🚗","featured":false},{"id":30,"name":"Uber","label":"UBER","entity":"UBER","relation":"company","category":"commerce","exposure":8.4,"icon":"🚕","featured":false},{"id":31,"name":"Walmart","label":"WMT","entity":"WMT","relation":"company","category":"commerce","exposure":9.7,"icon":"🛍️","featured":false},{"id":32,"name":"Wayfair","label":"W","entity":"W","relation":"company","category":"commerce","exposure":7,"icon":"🛏️","featured":false},{"id":33,"name":"Weather","label":"Private","entity":"WEATHERCO","relation":"product","category":"ai","exposure":6.6,"icon":"🌤️","featured":false},{"id":34,"name":"X","label":"SPCX","entity":"SPCX","relation":"subsidiary","category":"social","exposure":10.8,"icon":"𝕏","featured":false},{"id":35,"name":"YouTube","label":"GOOGL","entity":"GOOGL","relation":"subsidiary","category":"social","exposure":11,"icon":"▶️","featured":false}],"failures":[]}</script>
   <script>
     // ============================================================
-    // SSA SMART BASKET — PRODUCTION PATH v1.6
-    // - Session restore (no forced re-login every load)
-    // - Ecosystem Cap + Active Users derived from all 35 platforms
-    // - Live basket allocations (update every 4s from momentum)
-    // - Progress bar, sign-out, defensive guards
-    // - Single wallet path: injected provider (EIP-6963 → window.ethereum)
-    // - BNB Smart Chain native token: BNB
-    // - SSA Proceeds settlement route: SSA Proceeds → BluAre on BNB Smart Chain
-    // - Execute payouts from the connected BluAre wallet or paste a transaction hash
-    // - Payouts become Confirmed automatically only after exact BluAre Transfer verification
-    // - SSA Proceeds are deducted once, and only after verification succeeds
+    // SSA SMART BASKET — v2.0 (real data rebuild)
+    // - Market caps: real. Public companies from data/market-caps.json, refreshed by a
+    //   scheduled GitHub Action (Nasdaq market cap + Yahoo price/daily change). Private
+    //   companies use their latest publicly reported valuation (source + date shown).
+    // - Ecosystem total counts each owning company once (Instagram/Facebook -> Meta, etc).
+    // - No random drift anywhere in market data.
+    // - Wallet: injected provider (EIP-6963 -> window.ethereum), BNB Smart Chain (56).
+    //   Real BNB + BEP-20 balances via public RPC, refreshed every 15s and on
+    //   accountsChanged / chainChanged. Token facts read from the contract itself.
+    // - Token price only from real DEX liquidity; none is invented.
+    // - Every transaction is signed by the user in their own wallet. No keys here.
+    // - Basket, PayPal and SSA Proceeds are SIMULATIONS and labeled as such.
     // ============================================================
 
     tailwind.config = {
@@ -681,87 +706,260 @@
     // ── Constants ────────────────────────────────────────────────
     const BLUARE_CHAIN_ID_HEX = "0x38";
     const BLUARE_CHAIN_ID_DEC = 56;
-    const BLUARE_RPC = "https://bsc-dataseed.binance.org";
+    // Public BNB Smart Chain RPCs, tried in order (read-only; no keys).
+    const BLUARE_RPCS = [
+      "https://bsc-dataseed.binance.org",
+      "https://bsc-dataseed1.defibit.io",
+      "https://bsc-rpc.publicnode.com",
+      "https://bsc-dataseed1.ninicoin.io"
+    ];
+    const BLUARE_RPC = BLUARE_RPCS[0];
     const BLUARE_EXPLORER = "https://bscscan.com";
     const BLUARE_TOKEN_ADDRESS = "0x727B8B9feE8428c16E60F070c43649357ECAabF2";
     let BLUARE_TOKEN_DECIMALS = 18;
 
-    // SSA Proceeds → BluAre direct settlement configuration.
-    // SSA Proceeds now starts at $0.00.
-    // BluAre starts at $50,057.213511 per token and remains on that starting rate
-    // until a verified market value is returned by the configured backend.
-    const SSA_PROCEEDS_STARTING_BALANCE = 0;
-    const LEGACY_SEEDED_PROCEEDS_BALANCE = 158_255.43;
-    const BLUARE_STARTING_SETTLEMENT_RATE = 50_057.213511;
-    const BLUARE_USD_SETTLEMENT_RATE = BLUARE_STARTING_SETTLEMENT_RATE;
-    const BLUARE_QUOTE_DECIMALS = 6;
-
-    // Optional verified market-rate endpoint.
-    // Expected response: { priceUsd: 50057.213511, updatedAt?: "2026-08-01T00:00:00Z" }
-    // Accepted price keys: priceUsd, marketValueUsd, marketPriceUsd, price.
-    // Leave blank to keep using the starting rate.
-    const BLUARE_MARKET_RATE_API_URL = "";
-    const BLUARE_MARKET_RATE_REFRESH_MS = 60_000;
+    // Token market price comes ONLY from real DEX pools (GeckoTerminal, DexScreener as backup).
+    // A price is shown/used only if pools hold at least this much liquidity AND traded in the last 24h.
+    // Otherwise the UI says there is no market price — nothing is invented.
+    const BLUARE_MIN_LIQUIDITY_USD = 10_000;
+    const BLUARE_GECKO_POOLS_URL = `https://api.geckoterminal.com/api/v2/networks/bsc/tokens/${BLUARE_TOKEN_ADDRESS}/pools?page=1`;
+    const BLUARE_DEXSCREENER_URL = `https://api.dexscreener.com/token-pairs/v1/bsc/${BLUARE_TOKEN_ADDRESS}`;
+    const BNB_USD_URL = "https://api.coingecko.com/api/v3/simple/price?ids=binancecoin&vs_currencies=usd";
+    const BLUARE_MARKET_RATE_REFRESH_MS = 120_000;
+    const WALLET_REFRESH_MS = 15_000;
     const BLUARE_PAYOUT_AUTO_VERIFY_MS = 15_000;
 
-    // Optional server-side settlement endpoint for a future custodial treasury flow.
-    // This version does not require it: payouts can execute from the connected wallet.
+    // SSA Proceeds is an in-app SIMULATED ledger (credited when you "sell" a simulated basket
+    // holding). It is not money. It starts at $0.00. The old $158,255.43 demo seed is removed.
+    const SSA_PROCEEDS_STARTING_BALANCE = 0;
+    const LEGACY_SEEDED_PROCEEDS_BALANCE = 158_255.43;
+    const BLUARE_QUOTE_DECIMALS = 6;
+
+    // Optional server-side settlement endpoint for a future custodial treasury flow (unused).
     const SSA_SETTLEMENT_API_URL = "";
 
     const LAST_STATE_KEY = "ssa-last-state-key";
     const LAST_EMAIL_KEY = "ssa-last-email";
 
     const BLUARE_ABI = [
-      "function balanceOf(address owner) view returns (uint256)",
-      "function transfer(address to, uint256 amount) returns (bool)",
+      "function name() view returns (string)",
+      "function symbol() view returns (string)",
       "function decimals() view returns (uint8)",
-      "function symbol() view returns (string)"
+      "function totalSupply() view returns (uint256)",
+      "function balanceOf(address owner) view returns (uint256)",
+      "function owner() view returns (address)",
+      "function paused() view returns (bool)",
+      "function transfer(address to, uint256 amount) returns (bool)"
     ];
 
-    // ── Platform data (engagement = SSA index contribution in millions) ──
-    const platforms = [
-      { id: 1,  name: "Amazon",        ticker: "AMZN",   category: "commerce", exposure: 14.2, change: 1.9,  icon: "🛒", featured: true,  marketCap: 2_150_000_000_000, engagement: 1.85 },
-      { id: 2,  name: "Apple Store",   ticker: "AAPL",   category: "commerce", exposure: 13.8, change: 0.7,  icon: "🍎", featured: true,  marketCap: 3_450_000_000_000, engagement: 1.65 },
-      { id: 3,  name: "Best Buy",      ticker: "BBY",    category: "commerce", exposure: 7.9,  change: 2.4,  icon: "📺", featured: true,  marketCap: 22_000_000_000, engagement: 0.42 },
-      { id: 4,  name: "ChatGPT",       ticker: "OPENAI", category: "ai",       exposure: 11.6, change: 4.8,  icon: "🤖", featured: true,  marketCap: 280_000_000_000, engagement: 1.35 },
-      { id: 5,  name: "Coinbase",      ticker: "COIN",   category: "finance",  exposure: 10.3, change: 5.2,  icon: "💠", featured: true,  marketCap: 58_000_000_000, engagement: 0.78 },
-      { id: 6,  name: "Costco",        ticker: "COST",   category: "commerce", exposure: 9.1,  change: 1.2,  icon: "🧺", featured: true,  marketCap: 410_000_000_000, engagement: 0.68 },
-      { id: 7,  name: "eBay",          ticker: "EBAY",   category: "commerce", exposure: 6.7,  change: -0.8, icon: "📦", featured: true,  marketCap: 32_000_000_000, engagement: 0.38 },
-      { id: 8,  name: "Epic Games",    ticker: "EPIC",   category: "social",   exposure: 8.4,  change: 3.1,  icon: "🎮", featured: true,  marketCap: 32_000_000_000, engagement: 0.55 },
-      { id: 9,  name: "Etsy",          ticker: "ETSY",   category: "commerce", exposure: 7.4,  change: 1.6,  icon: "🧵", featured: true,  marketCap: 8_500_000_000, engagement: 0.32 },
-      { id: 10, name: "Facebook",      ticker: "META",   category: "social",   exposure: 10.9, change: 2.1,  icon: "📘", featured: true,  marketCap: 1_450_000_000_000, engagement: 1.25 },
-      { id: 11, name: "GameStop",      ticker: "GME",    category: "commerce", exposure: 6.8,  change: 2.9,  icon: "🕹️", featured: true,  marketCap: 12_000_000_000, engagement: 0.28 },
-      { id: 12, name: "Google",        ticker: "GOOGL",  category: "ai",       exposure: 11.0, change: 2.7,  icon: "🔍", featured: true,  marketCap: 2_250_000_000_000, engagement: 1.40 },
-      { id: 13, name: "Grok",          ticker: "XAI",    category: "ai",       exposure: 12.1, change: 6.4,  icon: "🧠", featured: true,  marketCap: 75_000_000_000, engagement: 0.95 },
-      { id: 14, name: "Grokipedia",    ticker: "GROK",   category: "ai",       exposure: 8.2,  change: 4.3,  icon: "📚", featured: true,  marketCap: 4_000_000_000, engagement: 0.22 },
-      { id: 15, name: "Instagram",     ticker: "IG",     category: "social",   exposure: 10.1, change: 3.5,  icon: "📸", featured: true,  marketCap: 380_000_000_000, engagement: 0.88 },
-      { id: 16, name: "Kalshi",        ticker: "KLSH",   category: "finance",  exposure: 7.2,  change: 1.5,  icon: "📊", featured: false, marketCap: 2_500_000_000, engagement: 0.18 },
-      { id: 17, name: "Kraken",        ticker: "KRAK",   category: "finance",  exposure: 8.0,  change: -1.2, icon: "🦑", featured: false, marketCap: 12_000_000_000, engagement: 0.25 },
-      { id: 18, name: "Kohls",         ticker: "KSS",    category: "commerce", exposure: 6.5,  change: 0.8,  icon: "👕", featured: false, marketCap: 3_200_000_000, engagement: 0.20 },
-      { id: 19, name: "Perplexity",    ticker: "PERP",   category: "ai",       exposure: 9.5,  change: 5.7,  icon: "✨", featured: false, marketCap: 18_000_000_000, engagement: 0.45 },
-      { id: 20, name: "Pinterest",     ticker: "PINS",   category: "social",   exposure: 7.1,  change: 1.4,  icon: "📌", featured: false, marketCap: 28_000_000_000, engagement: 0.35 },
-      { id: 21, name: "Polymarket",    ticker: "POLY",   category: "finance",  exposure: 11.2, change: 8.9,  icon: "📈", featured: false, marketCap: 9_000_000_000, engagement: 0.52 },
-      { id: 22, name: "Robinhood",     ticker: "HOOD",   category: "finance",  exposure: 8.9,  change: 3.9,  icon: "📱", featured: false, marketCap: 22_000_000_000, engagement: 0.40 },
-      { id: 23, name: "Smart & Final", ticker: "SFS",    category: "commerce", exposure: 6.9,  change: 1.0,  icon: "🛒", featured: false, marketCap: 1_800_000_000, engagement: 0.12 },
-      { id: 24, name: "Starbucks",     ticker: "SBUX",   category: "commerce", exposure: 8.1,  change: 1.7,  icon: "☕", featured: false, marketCap: 115_000_000_000, engagement: 0.48 },
-      { id: 25, name: "SpaceXAI",      ticker: "SPXAI",  category: "ai",       exposure: 10.5, change: 1.1,  icon: "🚀", featured: false, marketCap: 350_000_000_000, engagement: 0.30 },
-      { id: 26, name: "StockX",        ticker: "STX",    category: "commerce", exposure: 7.7,  change: 2.6,  icon: "👟", featured: false, marketCap: 4_500_000_000, engagement: 0.22 },
-      { id: 27, name: "Target",        ticker: "TGT",    category: "commerce", exposure: 7.1,  change: 1.3,  icon: "🎯", featured: false, marketCap: 72_000_000_000, engagement: 0.50 },
-      { id: 28, name: "Twitch",        ticker: "TWCH",   category: "social",   exposure: 8.3,  change: 2.2,  icon: "🎥", featured: false, marketCap: 15_000_000_000, engagement: 0.38 },
-      { id: 29, name: "Tesla",         ticker: "TSLA",   category: "commerce", exposure: 11.3, change: 3.7,  icon: "🚗", featured: false, marketCap: 1_120_000_000_000, engagement: 0.72 },
-      { id: 30, name: "Uber",          ticker: "UBER",   category: "commerce", exposure: 8.4,  change: 2.0,  icon: "🚕", featured: false, marketCap: 155_000_000_000, engagement: 0.55 },
-      { id: 31, name: "Walmart",       ticker: "WMT",    category: "commerce", exposure: 9.7,  change: 0.9,  icon: "🛍️", featured: false, marketCap: 620_000_000_000, engagement: 0.90 },
-      { id: 32, name: "Wayfair",       ticker: "W",      category: "commerce", exposure: 7.0,  change: 1.1,  icon: "🛏️", featured: false, marketCap: 8_000_000_000, engagement: 0.18 },
-      { id: 33, name: "Weather",       ticker: "WTHR",   category: "ai",       exposure: 6.6,  change: 0.5,  icon: "🌤️", featured: false, marketCap: 2_200_000_000, engagement: 0.15 },
-      { id: 34, name: "X",             ticker: "X",      category: "social",   exposure: 10.8, change: 4.5,  icon: "𝕏", featured: false, marketCap: 45_000_000_000, engagement: 0.70 },
-      { id: 35, name: "YouTube",       ticker: "YT",     category: "social",   exposure: 11.0, change: 2.5,  icon: "▶️", featured: false, marketCap: 420_000_000_000, engagement: 1.05 }
+    // ── Market data (real) ────────────────────────────────────────
+    // Public companies: market cap + daily % change from data/market-caps.json, which a
+    // scheduled GitHub Action refreshes server-side (Nasdaq market cap, Yahoo price).
+    // Private companies: latest publicly reported valuation with source + date.
+    // Products/subsidiaries resolve to their owning company, so the total counts each company once.
+    const MARKET_DATA_URLS = [
+      "data/market-caps.json",
+      "https://raw.githubusercontent.com/jw8490/live-wallet/main/data/market-caps.json"
     ];
+    const MARKET_DATA_REFRESH_MS = 5 * 60_000;
+    const MARKET_DATA_STALE_MS = 4 * 24 * 3600_000; // > 4 days old = flagged stale (covers weekends/holidays)
 
-    // Initialize live values once
-    platforms.forEach((p) => {
-      p._liveCap = p.marketCap;
-      p._liveEngage = p.engagement;
-    });
+    let marketData = null;          // parsed market-caps.json
+    let marketDataOrigin = "";      // where it came from
+    let platforms = [];             // built from marketData.platforms
+    let liveSyncInterval = null;
+
+    function readSeedSnapshot() {
+      try {
+        const el = document.getElementById("ssa-seed-snapshot");
+        const txt = el?.textContent?.trim();
+        return txt ? JSON.parse(txt) : null;
+      } catch (_) { return null; }
+    }
+
+    function entityFor(p) { return marketData?.entities?.[p.entity] || null; }
+
+    function parentLabel(p) {
+      const e = entityFor(p);
+      if (!e) return "";
+      const short = {
+        META: "Meta", GOOGL: "Alphabet", AMZN: "Amazon", AAPL: "Apple", SPCX: "SpaceX",
+        CHDRAUIB: "Grupo Chedraui", OPENAI: "OpenAI", WEATHERCO: "The Weather Company"
+      }[p.entity] || e.name;
+      return short;
+    }
+
+    function platformChange(p) {
+      const e = entityFor(p);
+      return e?.type === "public" && Number.isFinite(Number(e.changePct)) ? Number(e.changePct) : null;
+    }
+
+    function platformValue(p) {
+      const e = entityFor(p);
+      if (!e) return null;
+      return e.type === "public" ? (e.marketCapUsd || null) : (e.valuationUsd || null);
+    }
+
+    function fmtUsdCompact(n, digits = 2) {
+      const v = Number(n || 0);
+      if (!Number.isFinite(v) || v <= 0) return "—";
+      if (v >= 1e12) return "$" + (v / 1e12).toFixed(digits) + "T";
+      if (v >= 1e9) return "$" + (v / 1e9).toFixed(v >= 1e11 ? 0 : 1) + "B";
+      if (v >= 1e6) return "$" + (v / 1e6).toFixed(1) + "M";
+      return "$" + v.toLocaleString("en-US", { maximumFractionDigits: 2 });
+    }
+
+    function fmtPct(v) {
+      if (v == null || !Number.isFinite(Number(v))) return "—";
+      const n = Number(v);
+      return (n >= 0 ? "+" : "") + n.toFixed(2) + "%";
+    }
+
+    function fmtDate(iso, withTime = true) {
+      if (!iso) return "—";
+      const d = new Date(iso);
+      if (isNaN(d)) return String(iso);
+      return withTime
+        ? d.toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short" })
+        : d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
+    }
+
+    function applyMarketData(data, origin) {
+      if (!data?.entities || !Array.isArray(data.platforms)) return false;
+      if (marketData && data.generatedAt && marketData.generatedAt && new Date(data.generatedAt) < new Date(marketData.generatedAt)) {
+        return false; // never go backwards
+      }
+      marketData = data;
+      marketDataOrigin = origin;
+      platforms = data.platforms.map((p) => ({ ...p, ticker: p.label }));
+      return true;
+    }
+
+    async function fetchMarketJson(url) {
+      const res = await fetch(url + (url.includes("?") ? "&" : "?") + "t=" + Date.now(), { cache: "no-store" });
+      if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
+      const data = await res.json();
+      if (!data?.generatedAt) throw new Error(`${url}: not a market-caps file`);
+      return data;
+    }
+
+    async function loadMarketData() {
+      // 1) The site's own data file. 2) If missing or > 2h old, the copy on GitHub's raw CDN
+      //    (updates as soon as the Action commits, before Pages finishes redeploying).
+      // 3) The snapshot embedded in this page.
+      let applied = false;
+      let local = null;
+      try { local = await fetchMarketJson(MARKET_DATA_URLS[0]); applied = applyMarketData(local, "site data file") || applied; }
+      catch (e) { console.info("Local market data unavailable:", e.message); }
+      const localAge = local ? Date.now() - new Date(local.generatedAt).getTime() : Infinity;
+      if (localAge > 2 * 3600_000 && location.protocol.startsWith("http")) {
+        try { const remote = await fetchMarketJson(MARKET_DATA_URLS[1]); applied = applyMarketData(remote, "GitHub (raw)") || applied; }
+        catch (e) { console.info("Remote market data unavailable:", e.message); }
+      }
+      if (!marketData) {
+        const seed = readSeedSnapshot();
+        if (seed) applied = applyMarketData(seed, "built-in snapshot");
+      }
+      return applied;
+    }
+
+    function renderMarketData() {
+      const capEl = document.getElementById("ecosystem-cap");
+      const momEl = document.getElementById("momentum-val");
+      const publicEl = document.getElementById("active-users-stat");
+      const publicDeltaEl = document.getElementById("active-users-delta");
+      const statusEl = document.getElementById("marketplace-status");
+      const lastSyncEl = document.getElementById("last-sync");
+      const marketCapEl = document.getElementById("marketplace-cap");
+      const trackedEl = document.getElementById("tracked-platforms-stat");
+      const trackedSubEl = document.getElementById("tracked-platforms-sub");
+      const syncLabelEl = document.getElementById("sync-label");
+      const syncDotEl = document.getElementById("sync-dot");
+
+      if (!marketData) {
+        if (capEl) capEl.textContent = "—";
+        if (statusEl) statusEl.textContent = "Market data unavailable";
+        if (syncLabelEl) syncLabelEl.textContent = "MARKET DATA OFFLINE";
+        return;
+      }
+      const t = marketData.totals || {};
+      const change = t.publicDailyChangePct;
+      const asOf = marketData.marketDataAsOf || marketData.generatedAt;
+      const age = Date.now() - new Date(marketData.generatedAt).getTime();
+      const stale = !Number.isFinite(age) || age > MARKET_DATA_STALE_MS;
+
+      if (capEl) capEl.textContent = fmtUsdCompact(t.ecosystemUsd, 3);
+      if (marketCapEl) marketCapEl.textContent = fmtUsdCompact(t.ecosystemUsd, 2);
+      if (momEl) {
+        momEl.textContent = change == null ? "—" : fmtPct(change);
+        const trendEl = document.getElementById("cap-change");
+        if (trendEl) {
+          const up = (change ?? 0) >= 0;
+          trendEl.className = "inline-flex items-center text-sm font-semibold " + (up ? "text-emerald-400" : "text-rose-400");
+          const icon = trendEl.querySelector("i");
+          if (icon) icon.className = "fa-solid mr-1 " + (up ? "fa-arrow-trend-up" : "fa-arrow-trend-down");
+        }
+      }
+      if (trackedEl) trackedEl.textContent = String(t.platformCount ?? platforms.length);
+      if (trackedSubEl) trackedSubEl.textContent = `${t.entityCount} companies · ${t.publicEntityCount} public, ${t.privateEntityCount} private`;
+      if (publicEl) publicEl.textContent = fmtUsdCompact(t.publicUsd, 3);
+      if (publicDeltaEl) publicDeltaEl.textContent = `+ ${fmtUsdCompact(t.privateUsd)} private (last reported)`;
+      if (lastSyncEl) lastSyncEl.textContent = "Prices as of " + fmtDate(asOf);
+      if (statusEl) statusEl.textContent = `Updated ${fmtDate(marketData.generatedAt)} · ${marketDataOrigin}` +
+        ((marketData.failures || []).some((f) => f.error) ? " · some quotes stale" : "");
+      if (syncLabelEl) syncLabelEl.textContent = stale ? "MARKET DATA STALE" : "REAL MARKET DATA";
+      if (syncDotEl) syncDotEl.className = "w-2 h-2 rounded-full " + (stale ? "bg-yellow-400" : "bg-emerald-400 live-dot");
+      const syncWrap = document.getElementById("sync-wrap");
+      if (syncWrap) syncWrap.className = "flex items-center justify-center sm:justify-start gap-x-2 text-xs " + (stale ? "text-yellow-300" : "text-emerald-400");
+
+      platforms.forEach((p) => {
+        const badge = document.getElementById("platform-change-" + p.id);
+        const ch = platformChange(p);
+        if (badge) {
+          badge.textContent = ch == null ? "private" : fmtPct(ch);
+          badge.className = "text-[11px] font-bold " + (ch == null ? "text-zinc-500" : ch >= 0 ? "text-emerald-400" : "text-rose-400");
+        }
+      });
+      renderSourcesTable();
+    }
+
+    function renderSourcesTable() {
+      const el = document.getElementById("ssa-sources-table");
+      if (!el || !marketData) return;
+      const used = [...new Set(platforms.map((p) => p.entity))];
+      const rows = used.map((id) => marketData.entities[id]).filter(Boolean)
+        .sort((a, b) => (b.marketCapUsd || b.valuationUsd || 0) - (a.marketCapUsd || a.valuationUsd || 0));
+      const covers = (id) => platforms.filter((p) => p.entity === id).map((p) => p.name).join(", ");
+      el.innerHTML = rows.map((e) => {
+        const isPub = e.type === "public";
+        const val = isPub ? e.marketCapUsd : e.valuationUsd;
+        const detail = isPub
+          ? `${escapeHtml(e.symbol)} · ${e.price ? (e.currency && e.currency !== "USD" ? e.currency + " " : "$") + Number(e.price).toFixed(2) : ""} · <span class="${(e.changePct ?? 0) >= 0 ? "text-emerald-400" : "text-rose-400"}">${fmtPct(e.changePct)}</span>${e.stale ? ' · <span class="text-yellow-300">stale</span>' : ""}`
+          : `Last reported valuation · ${fmtDate(e.asOf, false)} · <a class="underline hover:text-yellow-300" href="${escapeHtml(e.source)}" target="_blank" rel="noopener noreferrer">source</a>`;
+        return `
+          <tr class="border-t border-zinc-800/80 align-top">
+            <td class="py-2 pr-3"><div class="text-zinc-200 font-semibold">${escapeHtml(e.name)}</div><div class="text-[10px] text-zinc-500">${escapeHtml(covers(e.id))}</div></td>
+            <td class="py-2 pr-3 text-right font-mono text-zinc-100 whitespace-nowrap">${fmtUsdCompact(val)}</td>
+            <td class="py-2 text-[11px] text-zinc-400">${detail}${e.note ? `<div class="text-[10px] text-zinc-500 mt-0.5">${escapeHtml(e.note)}</div>` : ""}${!isPub && e.basis ? `<div class="text-[10px] text-zinc-500 mt-0.5">${escapeHtml(e.basis)}</div>` : ""}</td>
+          </tr>`;
+      }).join("");
+    }
+
+    async function refreshMarketData() {
+      try { await loadMarketData(); } catch (e) { console.warn("Market data load failed", e); }
+      renderMarketData();
+      renderPlatforms();
+      if (ssaState.portfolio?.length > 0) {
+        updateLivePortfolioValues();
+        renderBasketWidget();
+      }
+    }
+
+    function startLiveSyncLoop() {
+      if (liveSyncInterval) clearInterval(liveSyncInterval);
+      refreshMarketData();
+      liveSyncInterval = setInterval(refreshMarketData, MARKET_DATA_REFRESH_MS);
+    }
 
     // ── Core state ───────────────────────────────────────────────
     let ssaState = {
@@ -774,8 +972,8 @@
       liveBluAreBalance: 0,
       nativeBnbBalance: 0,
       ssaProceedsBalance: SSA_PROCEEDS_STARTING_BALANCE,
-      bluAreSettlementRate: BLUARE_USD_SETTLEMENT_RATE,
-      bluAreRateSource: "starting",
+      bluAreSettlementRate: 0,
+      bluAreRateSource: "none",
       bluAreRateUpdatedAt: null,
       payoutHistory: [],
       settlementLedgerVersion: 4,
@@ -785,11 +983,14 @@
     };
 
     let currentStep = 1;
-    let liveSyncInterval = null;
     let activeAccountKey = "";
     let injectedProvider = null;
     let activePayoutReceiptId = "";
     let payoutAutoVerifyInFlight = false;
+
+    // Live token facts read from the contract, and live DEX market status.
+    let tokenInfo = { exists: false, name: null, symbol: null, decimals: null, totalSupply: null, owner: null, ownerBalance: null, circulating: null, paused: null, blockNumber: null, readAt: null, error: "" };
+    let tokenMarket = { status: "unknown", priceUsd: null, liquidityUsd: 0, volume24hUsd: 0, poolCount: 0, deepestPool: null, pools: [], checkedAt: null, error: "" };
 
     // ── Utils ────────────────────────────────────────────────────
     function normalizeEmail(email) {
@@ -859,75 +1060,108 @@
     }
 
     function formatBluAreRate(value = ssaState.bluAreSettlementRate) {
-      return Number(value || 0).toLocaleString("en-US", {
-        minimumFractionDigits: 6,
-        maximumFractionDigits: 6
-      });
+      const v = Number(value || 0);
+      if (!(v > 0)) return "—";
+      return v.toLocaleString("en-US", { minimumFractionDigits: 6, maximumFractionDigits: v < 0.01 ? 12 : 6 });
     }
 
     function getBluAreRateSourceLabel() {
-      return ssaState.bluAreRateSource === "market" ? "Verified market value" : "Starting rate";
+      if (tokenMarket.status === "liquid") return "Live DEX price";
+      if (tokenMarket.status === "illiquid") return "No market price";
+      return "Checking market…";
+    }
+
+    function hasLiveBluArePrice() {
+      return tokenMarket.status === "liquid" && Number(tokenMarket.priceUsd) > 0;
     }
 
     function applyBluAreRateToOpenQuote() {
       const rateInput = document.getElementById("bluare-settlement-rate");
       const sourceEl = document.getElementById("bluare-rate-source");
       const updatedEl = document.getElementById("bluare-rate-updated");
-      if (rateInput) rateInput.value = Number(ssaState.bluAreSettlementRate || BLUARE_USD_SETTLEMENT_RATE);
+      if (rateInput) rateInput.value = hasLiveBluArePrice() ? Number(tokenMarket.priceUsd) : "";
       if (sourceEl) sourceEl.textContent = getBluAreRateSourceLabel();
-      if (updatedEl) {
-        updatedEl.textContent = ssaState.bluAreRateSource === "market" && ssaState.bluAreRateUpdatedAt
-          ? `Updated ${new Date(ssaState.bluAreRateUpdatedAt).toLocaleString()}`
-          : `Starts at $${formatBluAreRate(BLUARE_STARTING_SETTLEMENT_RATE)} per BluAre`;
-      }
+      if (updatedEl) updatedEl.textContent = describeTokenMarket();
       updateBluAreSettlementQuote();
     }
 
-    async function refreshBluAreMarketRate({ silent = false } = {}) {
-      if (!BLUARE_MARKET_RATE_API_URL) {
-        if (ssaState.bluAreRateSource !== "market") {
-          ssaState.bluAreSettlementRate = BLUARE_STARTING_SETTLEMENT_RATE;
-          ssaState.bluAreRateSource = "starting";
-          ssaState.bluAreRateUpdatedAt = null;
-        }
-        applyBluAreRateToOpenQuote();
-        return false;
+    function describeTokenMarket() {
+      const m = tokenMarket;
+      if (m.status === "liquid") {
+        return `$${formatBluAreRate(m.priceUsd)} per token from ${m.poolCount} DEX pool(s) · liquidity ${fmtUsdCompact(m.liquidityUsd)} · 24h volume ${fmtUsdCompact(m.volume24hUsd)} · checked ${fmtDate(m.checkedAt)}`;
       }
+      if (m.status === "illiquid") {
+        return `No real market price: ${m.poolCount} PancakeSwap pool(s) hold only $${Number(m.liquidityUsd || 0).toFixed(2)} of liquidity in total with $${Number(m.volume24hUsd || 0).toFixed(2)} traded in 24h (minimum to quote a price: ${fmtUsdCompact(BLUARE_MIN_LIQUIDITY_USD)}). Checked ${fmtDate(m.checkedAt)}.`;
+      }
+      return m.error ? `Market check failed: ${m.error}` : "Checking DEX liquidity…";
+    }
 
+    async function refreshBluAreMarketRate({ silent = false } = {}) {
+      const tokenLower = BLUARE_TOKEN_ADDRESS.toLowerCase();
       try {
-        const response = await fetch(BLUARE_MARKET_RATE_API_URL, {
-          method: "GET",
-          headers: { "Accept": "application/json" },
-          cache: "no-store"
-        });
-        if (!response.ok) throw new Error(`BluAre market-rate request failed (${response.status}).`);
-
-        const data = await response.json();
-        const marketRate = Number(
-          data?.priceUsd ?? data?.marketValueUsd ?? data?.marketPriceUsd ?? data?.price
-        );
-        if (!Number.isFinite(marketRate) || marketRate <= 0) {
-          throw new Error("BluAre market-rate response did not include a valid USD price.");
+        let pools = [];
+        try {
+          const res = await fetch(BLUARE_GECKO_POOLS_URL, { headers: { Accept: "application/json" }, cache: "no-store" });
+          if (!res.ok) throw new Error(`GeckoTerminal HTTP ${res.status}`);
+          const json = await res.json();
+          pools = (json?.data || []).map((p) => {
+            const a = p.attributes || {};
+            const baseId = String(p.relationships?.base_token?.data?.id || "").toLowerCase();
+            const isBase = baseId.endsWith(tokenLower);
+            return {
+              source: "GeckoTerminal",
+              name: a.name,
+              address: a.address,
+              dex: p.relationships?.dex?.data?.id || "",
+              liquidityUsd: Number(a.reserve_in_usd || 0),
+              volume24hUsd: Number(a.volume_usd?.h24 || 0),
+              priceUsd: Number(isBase ? a.base_token_price_usd : a.quote_token_price_usd)
+            };
+          });
+        } catch (geckoErr) {
+          const res = await fetch(BLUARE_DEXSCREENER_URL, { cache: "no-store" });
+          if (!res.ok) throw new Error(`${geckoErr.message}; DexScreener HTTP ${res.status}`);
+          const json = await res.json();
+          pools = (Array.isArray(json) ? json : json?.pairs || []).map((p) => ({
+            source: "DexScreener",
+            name: `${p.baseToken?.symbol}/${p.quoteToken?.symbol}`,
+            address: p.pairAddress,
+            dex: p.dexId,
+            liquidityUsd: Number(p.liquidity?.usd || 0),
+            volume24hUsd: Number(p.volume?.h24 || 0),
+            priceUsd: String(p.baseToken?.address || "").toLowerCase() === tokenLower ? Number(p.priceUsd || 0) : 0
+          }));
         }
 
-        ssaState.bluAreSettlementRate = marketRate;
-        ssaState.bluAreRateSource = "market";
-        ssaState.bluAreRateUpdatedAt = data?.updatedAt || new Date().toISOString();
-        saveSSAState();
+        const liquidityUsd = pools.reduce((s, p) => s + (p.liquidityUsd || 0), 0);
+        const volume24hUsd = pools.reduce((s, p) => s + (p.volume24hUsd || 0), 0);
+        const deepest = [...pools].sort((a, b) => b.liquidityUsd - a.liquidityUsd)[0] || null;
+        const liquid = liquidityUsd >= BLUARE_MIN_LIQUIDITY_USD && volume24hUsd > 0 && deepest?.priceUsd > 0;
+
+        tokenMarket = {
+          status: liquid ? "liquid" : "illiquid",
+          priceUsd: liquid ? deepest.priceUsd : null,
+          liquidityUsd, volume24hUsd,
+          poolCount: pools.length,
+          deepestPool: deepest,
+          pools,
+          checkedAt: new Date().toISOString(),
+          error: ""
+        };
+        ssaState.bluAreSettlementRate = liquid ? deepest.priceUsd : 0;
+        ssaState.bluAreRateSource = liquid ? "market" : "none";
+        ssaState.bluAreRateUpdatedAt = tokenMarket.checkedAt;
+        renderTokenFacts();
         applyBluAreRateToOpenQuote();
-        if (!silent) showToast(`BluAre market value updated to $${formatBluAreRate(marketRate)}.`);
-        return true;
+        if (!silent) showToast(liquid ? `BluAre DEX price: $${formatBluAreRate(deepest.priceUsd)}` : "BluAre has no liquid market — no price is quoted.");
+        return liquid;
       } catch (error) {
-        console.warn("BluAre market-rate refresh failed:", error);
-        // Keep the most recent verified market value. Before the first verified value,
-        // continue using the configured starting rate.
-        if (ssaState.bluAreRateSource !== "market") {
-          ssaState.bluAreSettlementRate = BLUARE_STARTING_SETTLEMENT_RATE;
-          ssaState.bluAreRateSource = "starting";
-          ssaState.bluAreRateUpdatedAt = null;
-        }
+        console.warn("BluAre market check failed:", error);
+        tokenMarket = { ...tokenMarket, status: tokenMarket.status === "liquid" ? "liquid" : "unknown", error: error?.message || String(error), checkedAt: new Date().toISOString() };
+        if (tokenMarket.status !== "liquid") ssaState.bluAreSettlementRate = 0;
+        renderTokenFacts();
         applyBluAreRateToOpenQuote();
-        if (!silent) showToast(error?.message || "BluAre market value is unavailable. Starting rate remains active.");
+        if (!silent) showToast("Could not check BluAre DEX liquidity.");
         return false;
       }
     }
@@ -1016,18 +1250,6 @@
         </div>`).join("");
     }
 
-    async function getBluAreTokenDecimals(rpcOrSigner) {
-      try {
-        const token = new ethers.Contract(BLUARE_TOKEN_ADDRESS, BLUARE_ABI, rpcOrSigner);
-        const decimals = Number(await token.decimals());
-        if (Number.isInteger(decimals) && decimals >= 0 && decimals <= 36) {
-          BLUARE_TOKEN_DECIMALS = decimals;
-        }
-      } catch (error) {
-        console.warn("Could not read BluAre decimals; using configured fallback.", error);
-      }
-      return BLUARE_TOKEN_DECIMALS;
-    }
 
     async function verifyBluAreTransfer(txHash, recipient, expectedAmount, expectedSender = "") {
       const normalizedHash = String(txHash || "").trim();
@@ -1038,7 +1260,7 @@
         throw new Error("The payout recipient is not a valid BNB Smart Chain address.");
       }
 
-      const rpc = new ethers.JsonRpcProvider(BLUARE_RPC);
+      const rpc = await getRpc();
       const receipt = await rpc.getTransactionReceipt(normalizedHash);
       if (!receipt) {
         throw new Error("Transaction is not mined yet. Automatic verification will retry.");
@@ -1286,7 +1508,8 @@
       const content = document.getElementById("wallet-modal-content");
       if (!content) return;
       const available = getAvailableSSAProceeds();
-      const rate = Number(ssaState.bluAreSettlementRate || BLUARE_USD_SETTLEMENT_RATE);
+      const rate = hasLiveBluArePrice() ? Number(tokenMarket.priceUsd) : 0;
+      const canQuote = rate > 0;
       const bluAreQuote = calculateBluAreAmount(available, rate);
       const recipient = ssaState.liveWalletAddress || "";
 
@@ -1299,7 +1522,7 @@
           <div class="rounded-3xl border border-yellow-400/20 bg-yellow-400/5 p-5">
             <div class="text-xs uppercase tracking-[0.2em] text-yellow-300 font-semibold">Direct BluAre payout</div>
             <div class="font-display text-2xl text-white mt-2">SSA Proceeds → BluAre</div>
-            <div class="text-sm text-zinc-400 mt-2">No USDC conversion. The recipient receives BluAre directly on BNB Smart Chain.</div>
+            <div class="text-sm text-zinc-400 mt-2">SSA Proceeds are a simulated in-app ledger, not money. A payout only happens if you sign a real ${escapeHtml(tokenSymbol())} transfer in your own wallet, and a quote needs a live DEX price.</div>
           </div>
 
           <form id="bluare-settlement-form" onsubmit="submitBluAreSettlement(event); return false;" class="space-y-4">
@@ -1320,13 +1543,11 @@
               </div>
               <div class="input-shell px-4 py-3">
                 <input id="bluare-settlement-rate" type="number" min="0.000001" step="0.000001"
-                  value="${rate}" readonly
+                  value="${canQuote ? rate : ""}" placeholder="No market price" readonly
                   class="w-full bg-transparent outline-none text-sm text-white cursor-not-allowed" required />
               </div>
               <div id="bluare-rate-updated" class="text-[11px] text-zinc-500 mt-2">
-                ${ssaState.bluAreRateSource === "market" && ssaState.bluAreRateUpdatedAt
-                  ? `Updated ${new Date(ssaState.bluAreRateUpdatedAt).toLocaleString()}`
-                  : `Starts at $${formatBluAreRate(BLUARE_STARTING_SETTLEMENT_RATE)} per BluAre until a verified market value is available.`}
+                ${escapeHtml(describeTokenMarket())}
               </div>
             </div>
 
@@ -1349,6 +1570,10 @@
               <strong class="text-zinc-200">Wallet execution:</strong> create the request, then connect the separate BNB Smart Chain wallet that holds BluAre and approve the transfer. You can also paste an existing transaction hash. SSA Proceeds are deducted only after the exact BluAre Transfer event is verified.
             </div>
 
+            ${!canQuote ? `
+            <div class="rounded-2xl border border-yellow-400/30 bg-yellow-400/5 p-4 text-xs text-yellow-100 leading-relaxed">
+              <strong>Payouts are disabled:</strong> ${escapeHtml(tokenInfo.name || "BluAre")} has no liquid market, so there is no honest USD → token rate. (The old fixed $50,057.21 "starting rate" was not a market price.)
+            </div>` : ""}
             ${available <= 0 ? `
             <div class="rounded-2xl border border-rose-500/20 bg-rose-500/5 p-4 text-xs text-rose-200 leading-relaxed">
               <strong>No SSA Proceeds yet.</strong> Sell holdings from your Smart Basket / Live Portfolio first. Each sale credits SSA Proceeds, which you can then settle directly to BluAre.
@@ -1356,9 +1581,9 @@
 
             <button type="button" id="create-bluare-payout-btn"
               onclick="submitBluAreSettlement(event)"
-              ${available <= 0 ? "disabled" : ""}
-              class="w-full py-4 ${available <= 0 ? "bg-zinc-800 text-zinc-500 cursor-not-allowed" : "bg-yellow-400 hover:bg-yellow-300 text-zinc-950"} font-black rounded-3xl flex items-center justify-center gap-2">
-              <i class="fa-solid fa-coins"></i>${available <= 0 ? "No SSA Proceeds available" : "Create direct BluAre payout"}
+              ${available <= 0 || !canQuote ? "disabled" : ""}
+              class="w-full py-4 ${available <= 0 || !canQuote ? "bg-zinc-800 text-zinc-500 cursor-not-allowed" : "bg-yellow-400 hover:bg-yellow-300 text-zinc-950"} font-black rounded-3xl flex items-center justify-center gap-2">
+              <i class="fa-solid fa-coins"></i>${!canQuote ? "No market price — payouts disabled" : available <= 0 ? "No SSA Proceeds available" : "Create direct BluAre payout"}
             </button>
           </form>
 
@@ -1466,6 +1691,11 @@
         showToast("No SSA Proceeds available. Sell holdings from your Smart Basket first to generate proceeds.");
         return;
       }
+      if (!hasLiveBluArePrice()) {
+        showToast("BluAre has no liquid market price, so no payout quote can be created.");
+        return;
+      }
+      settlementRate = Number(tokenMarket.priceUsd);
       if (!Number.isFinite(amount) || amount <= 0) {
         showToast("Enter a positive SSA Proceeds amount.");
         return;
@@ -1552,8 +1782,8 @@
         liveBluAreBalance: 0,
         nativeBnbBalance: 0,
         ssaProceedsBalance: SSA_PROCEEDS_STARTING_BALANCE,
-        bluAreSettlementRate: BLUARE_USD_SETTLEMENT_RATE,
-        bluAreRateSource: "starting",
+        bluAreSettlementRate: 0,
+        bluAreRateSource: "none",
         bluAreRateUpdatedAt: null,
         payoutHistory: [],
         settlementLedgerVersion: 4,
@@ -1590,12 +1820,11 @@
           }
           return payout;
         });
-        const savedRate = Number(parsed.bluAreSettlementRate || BLUARE_USD_SETTLEMENT_RATE);
-        ssaState.bluAreRateSource = parsed.bluAreRateSource === "market" ? "market" : "starting";
-        ssaState.bluAreRateUpdatedAt = parsed.bluAreRateUpdatedAt || null;
-        ssaState.bluAreSettlementRate = ssaState.bluAreRateSource === "market" && savedRate > 0
-          ? savedRate
-          : BLUARE_STARTING_SETTLEMENT_RATE;
+        // Never trust a saved rate (older versions stored a hard-coded $50,057.21 "starting rate").
+        // The rate is re-read from live DEX pools; with no liquid market it is 0 and payouts are disabled.
+        ssaState.bluAreSettlementRate = hasLiveBluArePrice() ? Number(tokenMarket.priceUsd) : 0;
+        ssaState.bluAreRateSource = hasLiveBluArePrice() ? "market" : "none";
+        ssaState.bluAreRateUpdatedAt = tokenMarket.checkedAt || null;
 
         // v2 removes the old $158,255.43 demo seed. Preserve balances created by actual
         // basket sales, but reset the untouched legacy seeded balance to $0.00.
@@ -1614,6 +1843,8 @@
         // Never trust a previously stored liveWalletAddress without a live provider
         if (!injectedProvider) {
           ssaState.liveWalletAddress = "";
+          ssaState.liveBluAreBalance = 0;
+          ssaState.nativeBnbBalance = 0;
           ssaState.liveNetwork = "";
         }
 
@@ -1689,6 +1920,17 @@
         showToast("Signed in. Open wallet to connect BNB Smart Chain.");
         setTimeout(() => showWalletModal(), 700);
       }, 700);
+    }
+
+    function skipSignIn() {
+      const overlay = document.getElementById("signin-overlay");
+      if (overlay) {
+        overlay.classList.add("hidden-access");
+        overlay.style.display = "none";
+      }
+      currentStep = 1;
+      renderProgressBar();
+      renderCurrentStep();
     }
 
     function signOutLocal() {
@@ -1840,6 +2082,8 @@
 
         await ensureBluAreNetwork(provider);
         saveLiveBluAreWalletSession(address);
+        ssaState.walletChainId = await readWalletChainId();
+        startWalletLiveUpdates();
         await refreshLiveTokenBalance();
         updateWalletUI();
         renderWalletModalContent();
@@ -1866,6 +2110,8 @@
         const accounts = await provider.request({ method: "eth_accounts" });
         if (accounts?.[0]) {
           saveLiveBluAreWalletSession(accounts[0]);
+          ssaState.walletChainId = await readWalletChainId();
+          startWalletLiveUpdates();
           await refreshLiveTokenBalance().catch(() => {});
         } else {
           ssaState.liveWalletAddress = "";
@@ -1876,31 +2122,207 @@
       }
     }
 
+    // ── Live on-chain reads (public RPC, read-only) ──────────────
+    let _rpcProvider = null;
+    let _rpcIndex = 0;
+    let walletRefreshInterval = null;
+    let walletListenersBound = null;
+    let bnbUsdPrice = null;
+
+    function makeRpc(url) {
+      const network = ethers.Network.from(BLUARE_CHAIN_ID_DEC);
+      return new ethers.JsonRpcProvider(url, network, { staticNetwork: network, batchMaxCount: 1 });
+    }
+
+    async function getRpc() {
+      if (_rpcProvider) return _rpcProvider;
+      for (let i = 0; i < BLUARE_RPCS.length; i++) {
+        const idx = (_rpcIndex + i) % BLUARE_RPCS.length;
+        try {
+          const p = makeRpc(BLUARE_RPCS[idx]);
+          await p.getBlockNumber();
+          _rpcIndex = idx;
+          _rpcProvider = p;
+          return p;
+        } catch (e) {
+          console.warn("RPC unavailable:", BLUARE_RPCS[idx], e?.shortMessage || e?.message);
+        }
+      }
+      throw new Error("All BNB Smart Chain RPC endpoints failed.");
+    }
+
+    function rotateRpc() {
+      _rpcProvider = null;
+      _rpcIndex = (_rpcIndex + 1) % BLUARE_RPCS.length;
+    }
+
+    async function getBluAreTokenDecimals(rpcOrSigner) {
+      if (tokenInfo.decimals != null) return tokenInfo.decimals;
+      try {
+        const token = new ethers.Contract(BLUARE_TOKEN_ADDRESS, BLUARE_ABI, rpcOrSigner || await getRpc());
+        const decimals = Number(await token.decimals());
+        if (Number.isInteger(decimals) && decimals >= 0 && decimals <= 36) BLUARE_TOKEN_DECIMALS = decimals;
+      } catch (error) {
+        console.warn("Could not read BluAre decimals; using 18.", error);
+      }
+      return BLUARE_TOKEN_DECIMALS;
+    }
+
+    // Reads the token contract itself: proves it exists and what it is.
+    async function refreshTokenInfo() {
+      try {
+        const rpc = await getRpc();
+        const code = await rpc.getCode(BLUARE_TOKEN_ADDRESS);
+        if (!code || code === "0x") {
+          tokenInfo = { ...tokenInfo, exists: false, error: "No contract deployed at this address on BNB Smart Chain." };
+          renderTokenFacts();
+          return tokenInfo;
+        }
+        const token = new ethers.Contract(BLUARE_TOKEN_ADDRESS, BLUARE_ABI, rpc);
+        const safe = (pr) => pr.then((v) => v).catch(() => null);
+        const [name, symbol, decimals, totalSupply, owner, paused, blockNumber] = await Promise.all([
+          safe(token.name()), safe(token.symbol()), safe(token.decimals()), safe(token.totalSupply()),
+          safe(token.owner()), safe(token.paused()), rpc.getBlockNumber()
+        ]);
+        const dec = decimals != null ? Number(decimals) : 18;
+        BLUARE_TOKEN_DECIMALS = dec;
+        const ownerBalance = owner ? await safe(token.balanceOf(owner)) : null;
+        const supply = totalSupply != null ? Number(ethers.formatUnits(totalSupply, dec)) : null;
+        const ownerBal = ownerBalance != null ? Number(ethers.formatUnits(ownerBalance, dec)) : null;
+        tokenInfo = {
+          exists: true,
+          codeBytes: (code.length - 2) / 2,
+          name, symbol, decimals: dec,
+          totalSupply: supply,
+          owner: owner || null,
+          ownerBalance: ownerBal,
+          circulating: supply != null && ownerBal != null ? Math.max(0, supply - ownerBal) : supply,
+          paused: paused == null ? null : Boolean(paused),
+          blockNumber: Number(blockNumber),
+          readAt: new Date().toISOString(),
+          error: ""
+        };
+      } catch (e) {
+        rotateRpc();
+        tokenInfo = { ...tokenInfo, error: e?.shortMessage || e?.message || String(e) };
+      }
+      renderTokenFacts();
+      return tokenInfo;
+    }
+
+    function tokenSymbol() { return tokenInfo.symbol || "B"; }
+    function fmtTokenAmount(n, maxFrac = 6) {
+      const v = Number(n || 0);
+      return v.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: maxFrac });
+    }
+
+    function renderTokenFacts() {
+      const el = document.getElementById("bluare-token-facts");
+      if (!el) return;
+      const t = tokenInfo, m = tokenMarket;
+      if (!t.exists && !t.error) { el.innerHTML = '<div class="text-xs text-zinc-500">Reading token contract from BNB Smart Chain…</div>'; return; }
+      if (t.error && !t.exists) { el.innerHTML = `<div class="text-xs text-rose-300">${escapeHtml(t.error)}</div>`; return; }
+      const ownerPct = t.totalSupply && t.ownerBalance != null ? (t.ownerBalance / t.totalSupply) * 100 : null;
+      const priceBlock = m.status === "liquid"
+        ? `<div class="text-emerald-300 font-semibold">$${formatBluAreRate(m.priceUsd)}</div>
+           <div class="text-[10px] text-zinc-500">Mkt cap (circulating) ${fmtUsdCompact(m.priceUsd * (t.circulating || 0))} · FDV ${fmtUsdCompact(m.priceUsd * (t.totalSupply || 0))}</div>`
+        : `<div class="text-yellow-300 font-semibold">${m.status === "illiquid" ? "No market price" : "Checking…"}</div>
+           <div class="text-[10px] text-zinc-500">${escapeHtml(describeTokenMarket())}</div>`;
+      el.innerHTML = `
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+          <div><div class="text-zinc-500 uppercase tracking-wider text-[10px]">Token</div><div class="text-zinc-100 font-semibold">${escapeHtml(t.name || "?")} (${escapeHtml(t.symbol || "?")})</div><div class="text-[10px] text-zinc-500">BEP-20 · ${t.decimals} decimals</div></div>
+          <div><div class="text-zinc-500 uppercase tracking-wider text-[10px]">Total supply</div><div class="text-zinc-100 font-semibold">${fmtTokenAmount(t.totalSupply, 2)}</div><div class="text-[10px] text-zinc-500">${t.paused ? "Transfers PAUSED" : "Transfers active"} · mintable by owner</div></div>
+          <div><div class="text-zinc-500 uppercase tracking-wider text-[10px]">Owner wallet holds</div><div class="text-zinc-100 font-semibold">${ownerPct != null ? ownerPct.toFixed(2) + "%" : "—"}</div><div class="text-[10px] text-zinc-500 break-all"><a class="underline hover:text-yellow-300" target="_blank" rel="noopener noreferrer" href="${BLUARE_EXPLORER}/address/${t.owner}">${shortAddress(t.owner || "")}</a> · circulating ${fmtTokenAmount(t.circulating, 0)}</div></div>
+          <div><div class="text-zinc-500 uppercase tracking-wider text-[10px]">Market</div>${priceBlock}</div>
+        </div>
+        <div class="mt-3 text-[10px] text-zinc-600">Read live from contract <a class="underline hover:text-yellow-300" target="_blank" rel="noopener noreferrer" href="${BLUARE_EXPLORER}/token/${BLUARE_TOKEN_ADDRESS}">${BLUARE_TOKEN_ADDRESS}</a> at block #${(t.blockNumber || 0).toLocaleString()} · ${fmtDate(t.readAt)}</div>`;
+    }
+
+    async function refreshBnbUsd() {
+      try {
+        const res = await fetch(BNB_USD_URL, { cache: "no-store" });
+        if (!res.ok) return;
+        const j = await res.json();
+        const v = Number(j?.binancecoin?.usd);
+        if (v > 0) bnbUsdPrice = v;
+      } catch (_) {}
+    }
+
     async function refreshLiveTokenBalance() {
       if (!ssaState.liveWalletAddress) return;
-
+      if (typeof ethers === "undefined") { console.warn("ethers not loaded"); return; }
       try {
-        if (typeof ethers === "undefined") {
-          console.warn("ethers not loaded");
-          return;
-        }
-        const rpc = new ethers.JsonRpcProvider(BLUARE_RPC);
-        const bnbWei = await rpc.getBalance(ssaState.liveWalletAddress);
-        ssaState.nativeBnbBalance = parseFloat(ethers.formatEther(bnbWei));
-
+        const rpc = await getRpc();
         const token = new ethers.Contract(BLUARE_TOKEN_ADDRESS, BLUARE_ABI, rpc);
-        const decimals = await getBluAreTokenDecimals(rpc);
-        const raw = await token.balanceOf(ssaState.liveWalletAddress);
-        ssaState.liveBluAreBalance = parseFloat(ethers.formatUnits(raw, decimals));
-
+        const [bnbWei, raw, blockNumber, decimals] = await Promise.all([
+          rpc.getBalance(ssaState.liveWalletAddress),
+          token.balanceOf(ssaState.liveWalletAddress),
+          rpc.getBlockNumber(),
+          getBluAreTokenDecimals(rpc)
+        ]);
+        ssaState.nativeBnbBalance = Number(ethers.formatEther(bnbWei));
+        ssaState.liveBluAreBalance = Number(ethers.formatUnits(raw, decimals));
+        ssaState.liveBalanceBlock = Number(blockNumber);
+        ssaState.liveBalanceReadAt = new Date().toISOString();
+        ssaState.liveBalanceError = "";
         syncWalletAvailableBalance();
         saveSSAState();
-        updateWalletUI();
       } catch (e) {
-        console.warn("BluAre balance fetch failed:", e.message);
-        syncWalletAvailableBalance();
-        updateWalletUI();
+        rotateRpc();
+        ssaState.liveBalanceError = e?.shortMessage || e?.message || "Balance read failed";
+        console.warn("BluAre balance fetch failed:", ssaState.liveBalanceError);
       }
+      updateWalletUI();
+      const modal = document.getElementById("wallet-modal");
+      if (modal && !modal.classList.contains("hidden") && !activePayoutReceiptId && document.getElementById("wallet-live-panel")) {
+        renderWalletModalContent();
+      }
+    }
+
+    async function readWalletChainId() {
+      try {
+        const p = getActiveWalletProvider();
+        if (!p?.request) return null;
+        return String(await p.request({ method: "eth_chainId" })).toLowerCase();
+      } catch (_) { return null; }
+    }
+
+    function startWalletLiveUpdates() {
+      if (walletRefreshInterval) clearInterval(walletRefreshInterval);
+      walletRefreshInterval = setInterval(async () => {
+        if (!ssaState.liveWalletAddress) return;
+        ssaState.walletChainId = await readWalletChainId();
+        refreshLiveTokenBalance();
+      }, WALLET_REFRESH_MS);
+      bindWalletEvents();
+    }
+
+    function bindWalletEvents() {
+      const provider = getActiveWalletProvider();
+      if (!provider?.on || walletListenersBound === provider) return;
+      walletListenersBound = provider;
+      provider.on("accountsChanged", (accounts) => {
+        const next = accounts?.[0] || "";
+        if (!next) {
+          disconnectLiveWallet({ silent: true });
+          showToast("Wallet locked or disconnected.");
+          return;
+        }
+        saveLiveBluAreWalletSession(next);
+        ssaState.liveBluAreBalance = 0;
+        ssaState.nativeBnbBalance = 0;
+        showToast("Account changed to " + shortAddress(next));
+        refreshLiveTokenBalance();
+      });
+      provider.on("chainChanged", (chainId) => {
+        ssaState.walletChainId = String(chainId).toLowerCase();
+        updateWalletUI();
+        if (ssaState.walletChainId !== BLUARE_CHAIN_ID_HEX) {
+          showToast("Wallet is not on BNB Smart Chain. Balances below are still read from chain 56.");
+        }
+        refreshLiveTokenBalance();
+      });
+      provider.on("disconnect", () => disconnectLiveWallet({ silent: true }));
     }
 
     function syncWalletAvailableBalance() {
@@ -1974,7 +2396,8 @@
         const contract = new ethers.Contract(BLUARE_TOKEN_ADDRESS, BLUARE_ABI, signer);
 
         showToast("Confirm the BluAre transfer in your wallet…");
-        const tx = await contract.transfer(to.trim(), ethers.parseUnits(String(amt), decimals));
+        // User signs this in their own wallet; the site never holds keys.
+        const tx = await contract.transfer(to.trim(), ethers.parseUnits(String(amtText).replace(/,/g, "").trim(), decimals));
         showToast("BluAre transaction submitted. Waiting for confirmation…");
         await tx.wait();
 
@@ -1992,7 +2415,8 @@
       }
     }
 
-    function disconnectLiveWallet() {
+    function disconnectLiveWallet({ silent = false } = {}) {
+      if (walletRefreshInterval) { clearInterval(walletRefreshInterval); walletRefreshInterval = null; }
       injectedProvider = null;
       ssaState.liveWalletAddress = "";
       ssaState.liveNetwork = "";
@@ -2004,8 +2428,9 @@
       localStorage.removeItem("ssa-live-base-wallet");
       saveSSAState();
       updateWalletUI();
+      if (silent) { renderWalletModalContent(); return; }
       hideWalletModal();
-      showToast("Wallet disconnected. Local account still signed in.");
+      showToast("Wallet disconnected. (To fully revoke access, disconnect this site inside your wallet app.)");
     }
 
     function openWalletApp(wallet) {
@@ -2033,7 +2458,7 @@
         if (navUserName) navUserName.textContent = shortAddress(ssaState.liveWalletAddress);
         if (navUserStatus) {
           const bal = Number(ssaState.balance || 0);
-          navUserStatus.textContent = Number(ssaState.liveBluAreBalance || 0).toFixed(BLUARE_QUOTE_DECIMALS) + " BluAre";
+          navUserStatus.textContent = fmtTokenAmount(ssaState.liveBluAreBalance, 4) + " " + tokenSymbol() + " · " + Number(ssaState.nativeBnbBalance || 0).toFixed(4) + " BNB";
         }
       } else if (ssaState.user.email) {
         if (dot) dot.className = "w-2.5 h-2.5 bg-yellow-400 rounded-full";
@@ -2066,6 +2491,7 @@
     function renderWalletModalContent() {
       const content = document.getElementById("wallet-modal-content");
       if (!content) return;
+      activePayoutReceiptId = "";
 
       const hasProvider = Boolean(getInjectedProvider()?.request);
 
@@ -2076,12 +2502,12 @@
               <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400/10 text-yellow-300 text-sm font-black mb-4">
                 <span class="w-2.5 h-2.5 rounded-full bg-yellow-400"></span>BNB Smart Chain
               </div>
-              <div class="text-xs text-zinc-500 font-semibold tracking-[0.18em] mb-2">SSA PROCEEDS</div>
-              <div class="text-5xl font-mono font-black text-white">$${formatMoney(ssaState.ssaProceedsBalance)}</div>
-              <div class="text-sm text-yellow-300 mt-2">${calculateBluAreAmount(getAvailableSSAProceeds()).toFixed(BLUARE_QUOTE_DECIMALS)} BluAre payout quote</div>
-              <div class="text-[11px] text-zinc-500 mt-1">${getBluAreRateSourceLabel()} · $${formatBluAreRate()} per BluAre</div>
-              <div class="text-xs text-zinc-600 mt-4">
-                ${hasProvider ? "Provider detected. Connect it to select the BluAre recipient." : "Connect inside a supported wallet browser to select the BluAre recipient."}
+              <div class="text-sm text-zinc-300 leading-relaxed">
+                Connect your own wallet to see your <strong>real</strong> BNB and ${escapeHtml(tokenInfo.name || "BluAre")} (${escapeHtml(tokenSymbol())}) balances, read directly from BNB Smart Chain.
+              </div>
+              <div class="text-xs text-zinc-500 mt-3">
+                ${hasProvider ? "Wallet provider detected." : "No wallet detected in this browser. Open this page inside MetaMask, Trust Wallet or Coinbase Wallet, or install a browser extension."}
+                This site never sees your keys; every transaction is signed in your wallet.
               </div>
             </div>
 
@@ -2089,12 +2515,6 @@
               class="w-full py-4 bg-yellow-400 hover:bg-yellow-300 text-zinc-950 font-black rounded-3xl flex items-center justify-center gap-x-2 text-base">
               <i class="fa-solid fa-wallet"></i>
               Connect BNB Wallet
-            </button>
-
-            <button onclick="showBluAreSettlement()"
-              class="w-full py-3 border border-yellow-400/30 bg-yellow-400/5 text-yellow-300 font-bold rounded-3xl flex items-center justify-center gap-x-2 text-sm">
-              <i class="fa-solid fa-coins"></i>
-              View direct BluAre payout
             </button>
 
             <div class="grid grid-cols-3 gap-2 text-center text-[11px] text-zinc-400">
@@ -2107,7 +2527,13 @@
             </div>
 
             <div class="rounded-2xl bg-zinc-950/80 border border-zinc-800 p-4 text-xs text-zinc-400 leading-relaxed">
-              Direct route only: SSA Proceeds → BluAre on BNB Smart Chain. No USDC conversion is included.
+              <div class="text-zinc-500 uppercase tracking-wider text-[10px] mb-1">Token market</div>
+              ${escapeHtml(describeTokenMarket())}
+            </div>
+
+            <div class="rounded-2xl bg-zinc-950/80 border border-zinc-800 p-4 text-xs text-zinc-400">
+              Simulated SSA Proceeds (not money): <strong class="text-zinc-200">$${formatMoney(ssaState.ssaProceedsBalance)}</strong>
+              <button onclick="showBluAreSettlement()" class="ml-2 underline text-yellow-300">payout tools</button>
             </div>
 
             ${ssaState.user.email ? `
@@ -2123,56 +2549,69 @@
       const liveBluAre = Number(ssaState.liveBluAreBalance || 0);
       const proceeds = Number(ssaState.ssaProceedsBalance || 0);
       const bnb = Number(ssaState.nativeBnbBalance || 0);
+      const wrongChain = ssaState.walletChainId && ssaState.walletChainId !== BLUARE_CHAIN_ID_HEX;
+      const pctOfSupply = tokenInfo.totalSupply ? (liveBluAre / tokenInfo.totalSupply) * 100 : null;
+      const tokenUsd = hasLiveBluArePrice() ? liveBluAre * tokenMarket.priceUsd : null;
 
       content.innerHTML = `
-        <div class="space-y-4">
+        <div id="wallet-live-panel" class="space-y-4">
+          ${wrongChain ? `
+            <div class="rounded-2xl border border-rose-500/30 bg-rose-500/10 p-3 text-xs text-rose-200 flex items-center justify-between gap-3">
+              <span>Your wallet is on chain ${parseInt(ssaState.walletChainId, 16)}. Switch to BNB Smart Chain (56) to send.</span>
+              <button onclick="ensureBluAreNetwork(getActiveWalletProvider()).then(()=>refreshLiveTokenBalance()).catch(e=>showToast(e.message))" class="shrink-0 rounded-xl border border-rose-400/40 px-3 py-1.5 font-bold">Switch</button>
+            </div>` : ""}
           <div class="bg-zinc-950 p-5 border border-zinc-800 rounded-3xl">
             <div class="flex items-center justify-between gap-3 mb-5">
               <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400/10 text-yellow-300 text-sm font-black">
-                <span class="w-2.5 h-2.5 rounded-full bg-yellow-400"></span>BNB Smart Chain
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 live-dot"></span>BNB Smart Chain · live
               </div>
-              <button onclick="copyLiveWalletAddress()" class="text-zinc-400 hover:text-white text-xl">
+              <button onclick="copyLiveWalletAddress()" class="text-zinc-400 hover:text-white text-xl" title="Copy address">
                 <i class="fa-regular fa-copy"></i>
               </button>
             </div>
-            <div class="text-xs text-zinc-500 font-semibold tracking-[0.18em] mb-2">BLUARE WALLET</div>
-            <div class="text-4xl font-mono font-black text-white">${liveBluAre.toFixed(BLUARE_QUOTE_DECIMALS)}</div>
-            <div class="text-sm text-yellow-300 mt-1">BluAre</div>
+            <div class="text-xs text-zinc-500 font-semibold tracking-[0.18em] mb-2">${escapeHtml((tokenInfo.name || "BluAre").toUpperCase())} BALANCE</div>
+            <div class="${fmtTokenAmount(liveBluAre).length > 12 ? "text-2xl" : "text-4xl"} font-mono font-black text-white break-all">${fmtTokenAmount(liveBluAre)}</div>
+            <div class="text-sm text-yellow-300 mt-1">${escapeHtml(tokenSymbol())} ${pctOfSupply != null && liveBluAre > 0 ? `· ${pctOfSupply < 0.0001 ? "<0.0001" : pctOfSupply.toFixed(4)}% of supply` : ""}</div>
+            <div class="text-[11px] text-zinc-500 mt-1">${tokenUsd != null ? "≈ $" + formatMoney(tokenUsd) + " at live DEX price" : "No USD value: token has no liquid market"}</div>
             <div class="grid grid-cols-2 gap-2 mt-4 text-[11px]">
               <div class="rounded-2xl border border-yellow-400/20 bg-yellow-400/5 p-3">
-                <div class="text-zinc-500 uppercase tracking-wider">Live BluAre</div>
-                <div class="text-yellow-300 font-bold">${liveBluAre.toFixed(BLUARE_QUOTE_DECIMALS)}</div>
+                <div class="text-zinc-500 uppercase tracking-wider">BNB</div>
+                <div class="text-yellow-300 font-bold">${bnb.toLocaleString("en-US", { maximumFractionDigits: 6 })}</div>
+                <div class="text-[10px] text-zinc-500 mt-1">${bnbUsdPrice ? "≈ $" + formatMoney(bnb * bnbUsdPrice) : ""}</div>
               </div>
               <div class="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-3">
                 <div class="text-zinc-500 uppercase tracking-wider">SSA Proceeds</div>
                 <div class="text-white font-bold">$${formatMoney(proceeds)}</div>
-                <div class="text-[10px] text-zinc-600 mt-1">$${formatMoney(getAvailableSSAProceeds())} available</div>
+                <div class="text-[10px] text-zinc-600 mt-1">simulated · not money</div>
               </div>
             </div>
-            <div class="text-xs text-zinc-600 mt-4 break-all">${ssaState.liveWalletAddress}</div>
-            <div class="text-xs text-zinc-500 mt-2">BNB for gas: ${bnb.toFixed(6)}</div>
+            <div class="text-xs text-zinc-400 mt-4 break-all font-mono">${ssaState.liveWalletAddress}</div>
+            <div class="text-[10px] text-zinc-600 mt-1">
+              ${ssaState.liveBalanceError ? `<span class="text-rose-300">${escapeHtml(ssaState.liveBalanceError)}</span>` :
+                `Read at block #${Number(ssaState.liveBalanceBlock || 0).toLocaleString()} · ${fmtDate(ssaState.liveBalanceReadAt)} · refreshes every ${WALLET_REFRESH_MS / 1000}s`}
+            </div>
           </div>
-
-          <button onclick="showBluAreSettlement()"
-            class="w-full py-4 bg-yellow-400 hover:bg-yellow-300 text-zinc-950 font-black rounded-3xl flex items-center justify-center gap-x-2">
-            <i class="fa-solid fa-coins"></i>Settle SSA Proceeds directly to BluAre
-          </button>
 
           <div class="grid grid-cols-2 gap-3">
             <button onclick="showReceiveQR()"
               class="py-4 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-100 font-black rounded-3xl flex items-center justify-center gap-x-2">
-              <i class="fa-solid fa-plus"></i>Receive BluAre
+              <i class="fa-solid fa-plus"></i>Receive
             </button>
             <button onclick="sendLiveBluAre()"
               class="py-4 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-100 font-black rounded-3xl">
-              Send BluAre
+              Send ${escapeHtml(tokenSymbol())}
             </button>
           </div>
+
+          <button onclick="refreshLiveTokenBalance(); showToast('Refreshing from chain…')"
+            class="w-full py-3 border border-zinc-700 rounded-3xl font-bold text-sm text-zinc-200">
+            <i class="fa-solid fa-rotate text-yellow-400 mr-2"></i>Refresh now
+          </button>
 
           <div class="rounded-3xl border border-zinc-800 bg-zinc-950/60 p-4">
             <div class="flex items-center justify-between mb-3">
               <div class="text-xs uppercase tracking-wider text-zinc-500">Payout activity</div>
-              <div class="text-[10px] text-yellow-300">BluAre only</div>
+              <button onclick="showBluAreSettlement()" class="text-[10px] text-yellow-300 underline">payout tools</button>
             </div>
             <div class="space-y-2">${renderPayoutHistory(2)}</div>
           </div>
@@ -2189,96 +2628,6 @@
         </div>`;
     }
 
-    // ── Live index data (platform-derived) ───────────────────────
-    function forceLiveData() {
-      let totalCap = 0;
-      let weightedChange = 0;
-      let totalWeight = 0;
-      let totalEngage = 0;
-
-      platforms.forEach((p) => {
-        // Gentle momentum-aware drift (bounded)
-        const noise = (Math.random() - 0.5) * 0.08;
-        p.change = Math.max(-12, Math.min(15, p.change + noise));
-
-        if (typeof p._liveCap !== "number") p._liveCap = p.marketCap;
-        const drift = 1 + (p.change / 100) * 0.04 + (Math.random() - 0.5) * 0.0004;
-        p._liveCap = p._liveCap * drift;
-
-        // Hard bounds relative to base marketCap
-        const base = p.marketCap || 1;
-        if (p._liveCap < base * 0.82) p._liveCap = base * 0.82;
-        if (p._liveCap > base * 1.22) p._liveCap = base * 1.22;
-
-        // Engagement proxy drift (very small)
-        if (typeof p._liveEngage !== "number") p._liveEngage = p.engagement || 0.3;
-        p._liveEngage = Math.max(0.05, p._liveEngage * (1 + (Math.random() - 0.5) * 0.004));
-
-        totalCap += p._liveCap;
-        totalEngage += p._liveEngage;
-        weightedChange += p.change * base;
-        totalWeight += base;
-      });
-
-      const momentum24h = totalWeight > 0 ? weightedChange / totalWeight : 0;
-
-      const capEl = document.getElementById("ecosystem-cap");
-      const momEl = document.getElementById("momentum-val");
-      const usersEl = document.getElementById("active-users-stat");
-      const statusEl = document.getElementById("marketplace-status");
-      const lastSyncEl = document.getElementById("last-sync");
-      const marketCapEl = document.getElementById("marketplace-cap");
-      const usersDeltaEl = document.getElementById("active-users-delta");
-
-      if (capEl) {
-        if (totalCap >= 1e12) capEl.textContent = (totalCap / 1e12).toFixed(3) + "T";
-        else capEl.textContent = (totalCap / 1e9).toFixed(1) + "B";
-      }
-
-      if (momEl) {
-        const sign = momentum24h >= 0 ? "+" : "";
-        momEl.textContent = sign + momentum24h.toFixed(2);
-        const trendEl = document.getElementById("cap-change");
-        if (trendEl) {
-          trendEl.className = "inline-flex items-center text-sm font-semibold " +
-            (momentum24h >= 0 ? "text-emerald-400" : "text-rose-400");
-          const icon = trendEl.querySelector("i");
-          if (icon) {
-            icon.className = "fa-solid mr-1 " + (momentum24h >= 0 ? "fa-arrow-trend-up" : "fa-arrow-trend-down");
-          }
-        }
-      }
-
-      if (usersEl) usersEl.textContent = totalEngage.toFixed(2) + "m";
-      if (usersDeltaEl) usersDeltaEl.textContent = "Sum across 35 platforms";
-      if (statusEl) statusEl.textContent = "LIVE · Cap + users from all platforms";
-      if (lastSyncEl) lastSyncEl.textContent = "Last synced " + new Date().toLocaleTimeString();
-      if (marketCapEl) {
-        if (totalCap >= 1e12) marketCapEl.textContent = (totalCap / 1e12).toFixed(2) + "T";
-        else marketCapEl.textContent = (totalCap / 1e9).toFixed(0) + "B";
-      }
-
-      // Update visible platform change badges
-      platforms.forEach((p) => {
-        const badge = document.getElementById("platform-change-" + p.id);
-        if (badge) {
-          badge.textContent = (p.change >= 0 ? "+" : "") + p.change.toFixed(2);
-          badge.className = "text-[11px] font-bold " + (p.change >= 0 ? "text-emerald-400" : "text-rose-400");
-        }
-      });
-    }
-
-    function startLiveSyncLoop() {
-      if (liveSyncInterval) clearInterval(liveSyncInterval);
-      forceLiveData();
-      liveSyncInterval = setInterval(() => {
-        forceLiveData();
-        if (ssaState.portfolio?.length > 0) {
-          updateLivePortfolioValues();
-          renderBasketWidget(); // keep live total visible
-        }
-      }, 4000);
-    }
 
     // ── Platforms + Basket ───────────────────────────────────────
     function renderPlatforms() {
@@ -2289,12 +2638,15 @@
       const categoryFilter = document.getElementById("platform-filter")?.value || "all";
 
       const filtered = platforms.filter((p) => {
+        const parent = parentLabel(p).toLowerCase();
         const matchesQuery =
           p.name.toLowerCase().includes(query) ||
-          p.ticker.toLowerCase().includes(query);
+          String(p.ticker || "").toLowerCase().includes(query) ||
+          parent.includes(query);
+        const ch = platformChange(p);
         let matchesCategory = true;
-        if (categoryFilter === "positive") matchesCategory = p.change >= 0;
-        else if (categoryFilter === "negative") matchesCategory = p.change < 0;
+        if (categoryFilter === "positive") matchesCategory = ch != null && ch >= 0;
+        else if (categoryFilter === "negative") matchesCategory = ch != null && ch < 0;
         else if (categoryFilter !== "all") matchesCategory = p.category === categoryFilter;
         return matchesQuery && matchesCategory;
       });
@@ -2304,10 +2656,25 @@
       if (countEl) countEl.textContent = platforms.filter((p) => p.featured).length + " featured";
       if (visibleEl) visibleEl.textContent = filtered.length + " shown";
 
+      if (!platforms.length) {
+        grid.innerHTML = '<div class="col-span-full text-sm text-zinc-500 text-center py-8">Loading real market data…</div>';
+        return;
+      }
+
       grid.innerHTML = filtered.map((p) => {
         const inBasket = ssaState.basket.some((b) => b.id === p.id);
+        const e = entityFor(p);
+        const ch = platformChange(p);
+        const isProductOfParent = p.relation === "product" || p.relation === "subsidiary";
+        const isPrivate = e?.type === "private";
+        const valueLine = !e ? "—"
+          : isProductOfParent ? `part of ${escapeHtml(parentLabel(p))}`
+          : fmtUsdCompact(platformValue(p));
+        const valueTitle = !e ? "" : isPrivate
+          ? `Last reported valuation ${fmtUsdCompact(e.valuationUsd)} (${fmtDate(e.asOf, false)}) — ${e.basis || ""}`
+          : `${e.name}: market cap ${fmtUsdCompact(e.marketCapUsd)}${e.marketTime ? " as of " + fmtDate(e.marketTime) : ""}`;
         return `
-          <div onclick="toggleBasketItem(${p.id})"
+          <div onclick="toggleBasketItem(${p.id})" title="${escapeHtml(valueTitle)}"
             class="platform-card glass rounded-2xl p-4 border cursor-pointer select-none relative flex flex-col justify-between ${
               inBasket ? "border-yellow-400 bg-yellow-400/5 shadow-lg shadow-yellow-500/5" : "border-zinc-800"
             }">
@@ -2315,16 +2682,23 @@
               <div class="flex items-center justify-between mb-2">
                 <span class="text-2xl">${p.icon}</span>
                 <span id="platform-change-${p.id}"
-                  class="text-[11px] font-bold ${p.change >= 0 ? "text-emerald-400" : "text-rose-400"}">
-                  ${(p.change >= 0 ? "+" : "") + p.change.toFixed(2)}
+                  class="text-[11px] font-bold ${ch == null ? "text-zinc-500" : ch >= 0 ? "text-emerald-400" : "text-rose-400"}">
+                  ${ch == null ? "private" : fmtPct(ch)}
                 </span>
               </div>
               <div class="font-display font-bold text-white text-base truncate">${p.name}</div>
-              <div class="text-[11px] text-zinc-500 font-mono uppercase tracking-wider">${p.ticker}</div>
+              <div class="text-[11px] text-zinc-500 font-mono uppercase tracking-wider">${escapeHtml(p.ticker)}</div>
             </div>
-            <div class="mt-4 flex items-center justify-between text-[11px] text-zinc-400 border-t border-zinc-800/60 pt-2">
-              <span>Index Exp</span>
-              <span class="font-semibold text-zinc-200">${p.exposure}%</span>
+            <div class="mt-3 text-[11px] border-t border-zinc-800/60 pt-2 space-y-1">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-zinc-500">${isProductOfParent ? "Owner" : isPrivate ? "Last valuation" : "Mkt cap"}</span>
+                <span class="font-semibold text-zinc-200 truncate">${valueLine}</span>
+              </div>
+              ${isPrivate && !isProductOfParent ? `<div class="text-[10px] text-zinc-600 text-right">reported ${fmtDate(e.asOf, false)}</div>` : ""}
+              <div class="flex items-center justify-between text-zinc-500">
+                <span>SSA weight</span>
+                <span class="font-semibold text-zinc-300">${p.exposure}%</span>
+              </div>
             </div>
             ${inBasket ? `<div class="absolute -top-1 -right-1 bg-yellow-400 text-zinc-950 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black"><i class="fa-solid fa-check"></i></div>` : ""}
           </div>`;
@@ -2364,7 +2738,7 @@
         container.innerHTML = '<div class="text-sm text-zinc-500 text-center py-4">Add platforms from the left to build your basket</div>';
         if (totalEl) totalEl.textContent = "0";
         if (pnlEl) pnlEl.classList.add("hidden");
-        if (badgeEl) badgeEl.textContent = "Index tracking · Live";
+        if (badgeEl) badgeEl.textContent = "Simulation · real prices";
         return;
       }
 
@@ -2377,10 +2751,10 @@
         if (totalEl) totalEl.textContent = "$" + total.toFixed(2);
         if (pnlEl && pnlValueEl) {
           pnlEl.classList.remove("hidden");
-          pnlValueEl.textContent = (pnl >= 0 ? "+" : "") + pnl.toFixed(2) + "% live P&L";
+          pnlValueEl.textContent = (pnl >= 0 ? "+" : "") + pnl.toFixed(2) + "% simulated P&L";
           pnlValueEl.className = "font-semibold " + (pnl >= 0 ? "text-emerald-400" : "text-rose-400");
         }
-        if (badgeEl) badgeEl.textContent = "Live allocations · updating";
+        if (badgeEl) badgeEl.textContent = "Simulated · real price moves";
 
         container.innerHTML = ssaState.portfolio.map((p) => {
           const val = typeof p.currentValue === "number" ? p.currentValue : (p.originalAllocated || 0);
@@ -2392,7 +2766,7 @@
                 <div class="truncate">
                   <div class="text-xs font-semibold text-zinc-200 truncate">${p.name}</div>
                   <div class="text-[10px] ${ch >= 0 ? "text-emerald-400" : "text-rose-400"}">
-                    ${ch >= 0 ? "↑" : "↓"} ${Math.abs(ch).toFixed(1)}% live
+                    ${ch >= 0 ? "↑" : "↓"} ${Math.abs(ch).toFixed(2)}% since allocation
                   </div>
                 </div>
               </div>
@@ -2463,27 +2837,45 @@
       }).join("");
     }
 
-    // ── Allocation / Purchase (live index simulation) ────────────
+    // ── Allocation (simulation, valued with REAL price moves) ────
+    // No securities are bought. A simulated holding's value moves with the real share
+    // price of its owning public company since allocation. Private companies have no
+    // live price, so their simulated value stays flat until a new valuation is reported.
+    function referencePriceFor(platformId) {
+      const p = platforms.find((x) => x.id === platformId);
+      if (!p) return null;
+      const e = entityFor(p);
+      if (!e) return null;
+      if (e.type === "public" && Number(e.price) > 0) return { kind: "price", value: Number(e.price), entity: p.entity };
+      if (e.type === "private" && Number(e.valuationUsd) > 0) return { kind: "valuation", value: Number(e.valuationUsd), entity: p.entity };
+      return null;
+    }
+
     function allocatePortfolioFromAmount() {
       const total = parseFloat(ssaState.amount) || 500;
       if (!total || ssaState.basket.length === 0) {
         showToast("Add platforms and set an amount first.");
         return;
       }
-
-      // Normalize exposure weights so they sum to 100%
       const weightSum = ssaState.basket.reduce((s, p) => s + (p.exposure || 0), 0) || 1;
 
       ssaState.portfolio = ssaState.basket.map((p) => {
         const weight = (p.exposure || 0) / weightSum;
         const allocated = weight * total;
+        const ref = referencePriceFor(p.id);
         return {
           id: p.id,
           name: p.name,
           icon: p.icon,
+          entity: ref?.entity || p.entity || "",
           originalAllocated: allocated,
+          basisValue: allocated,
+          entryRef: ref ? ref.value : null,
+          entryKind: ref ? ref.kind : null,
+          entryAt: new Date().toISOString(),
           currentValue: allocated,
-          change: p.change || 0
+          change: 0,
+          simulated: true
         };
       });
 
@@ -2493,18 +2885,22 @@
     }
 
     function updateLivePortfolioValues() {
-      if (!ssaState.portfolio?.length) return;
+      if (!ssaState.portfolio?.length || !platforms.length) return;
 
       ssaState.portfolio.forEach((holding) => {
-        const platform = platforms.find((p) => p.id === holding.id);
-        if (!platform || !holding.originalAllocated) return;
-
-        // Momentum-scaled drift with low noise → true live feel
-        const momentum = (platform.change || 0) * 0.055;
-        const noise = (Math.random() - 0.5) * 0.28;
-        const delta = momentum + noise;
-
-        holding.currentValue = Math.max(0.01, holding.currentValue * (1 + delta / 100));
+        if (!holding.originalAllocated) return;
+        const ref = referencePriceFor(holding.id);
+        // Migrate holdings created by older versions (random-drift values): freeze the
+        // value they had and start tracking real prices from now on.
+        if (!holding.entryRef || !holding.entryKind) {
+          holding.basisValue = Number(holding.currentValue || holding.originalAllocated);
+          holding.entryRef = ref ? ref.value : null;
+          holding.entryKind = ref ? ref.kind : null;
+          holding.entryAt = new Date().toISOString();
+        }
+        if (ref && holding.entryRef > 0 && ref.kind === holding.entryKind) {
+          holding.currentValue = holding.basisValue * (ref.value / holding.entryRef);
+        }
         holding.change = ((holding.currentValue / holding.originalAllocated) - 1) * 100;
       });
 
@@ -2535,7 +2931,7 @@
       renderPlatforms();
       if (currentStep === 5) renderCurrentStep();
 
-      showToast(`Sold ${holding.name} for $${sellValue.toFixed(2)} → SSA Proceeds · BluAre settlement ready`);
+      showToast(`Simulated sale: ${holding.name} $${sellValue.toFixed(2)} credited to simulated SSA Proceeds (not real money).`);
       triggerConfetti();
     }
 
@@ -2587,7 +2983,7 @@
           <div class="glass rounded-3xl p-6 border border-zinc-800">
             <h3 class="font-display text-xl mb-2">Step 1 · Sign In</h3>
             <p class="text-sm text-zinc-400 mb-4">
-              Unlock your local SSA account, then connect an injected BNB Smart Chain wallet for live BluAre balances.
+              Unlock your local SSA account (stored only on this device), then connect your BNB Smart Chain wallet for live on-chain balances.
             </p>
             <button onclick="document.getElementById('signin-overlay').classList.remove('hidden-access'); document.getElementById('signin-overlay').style.display='flex'"
               class="w-full py-3 bg-yellow-400 hover:bg-yellow-300 text-zinc-950 font-semibold rounded-2xl">
@@ -2643,13 +3039,13 @@
           <div class="glass rounded-3xl p-6 border border-zinc-800">
             <h3 class="font-display text-xl mb-2">Step 4 · Confirm Allocation</h3>
             <p class="text-sm text-zinc-400 mb-4">
-              Creates a live index-tracking portfolio. Values will update every few seconds from platform momentum. No BluAre leaves a treasury wallet until the authenticated settlement backend is connected.
+              Creates a <strong>simulated</strong> portfolio — no securities are bought and no money moves. Each holding's value follows the real share-price change of its owning public company since allocation; private companies stay flat until a new valuation is reported.
             </p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <button onclick="runSimulatedAllocation()"
                 class="w-full py-3 bg-yellow-400 hover:bg-yellow-300 text-zinc-950 font-semibold rounded-2xl flex items-center justify-center gap-2">
                 <i class="fa-solid fa-bolt"></i>
-                <span>Go Live with Allocation</span>
+                <span>Create Simulated Allocation</span>
               </button>
               <button onclick="openPayPalSimulation()"
                 class="w-full py-3 bg-zinc-900 border border-zinc-700 hover:bg-zinc-800 text-zinc-100 font-semibold rounded-2xl flex items-center justify-center gap-2">
@@ -2660,10 +3056,10 @@
             ${isLiveWalletConnected() ? `
               <div class="mt-4 text-xs text-emerald-400 flex items-center gap-2">
                 <i class="fa-solid fa-check-circle"></i>
-                Live BNB Smart Chain wallet connected — BluAre balance reads are real.
+                Wallet connected — BNB and ${escapeHtml(tokenSymbol())} balances are read live from BNB Smart Chain.
               </div>` : `
               <div class="mt-4 text-xs text-zinc-500">
-                Connect a wallet in the header for live BluAre / BNB reads.
+                Connect a wallet in the header for live on-chain BNB / ${escapeHtml(tokenSymbol())} balances.
               </div>`}
           </div>`;
       } else if (currentStep === 5) {
@@ -2675,7 +3071,7 @@
         container.innerHTML = `
           <div class="glass rounded-3xl p-6 border border-zinc-800">
             <div class="flex items-center justify-between mb-2">
-              <h3 class="font-display text-xl">Step 5 · Live Portfolio</h3>
+              <h3 class="font-display text-xl">Step 5 · Simulated Portfolio</h3>
               ${holdings.length > 0 ? `
                 <div class="text-right">
                   <div class="font-mono font-bold text-lg text-white">$${total.toFixed(2)}</div>
@@ -2685,7 +3081,7 @@
                 </div>` : ""}
             </div>
             <p class="text-sm text-zinc-400 mb-4">
-              Live index values update every 4 seconds from platform momentum signals.
+              Values follow real share-price changes (market data refreshed every 30 min during US market hours). Simulation only — not a real investment.
             </p>
             <div id="portfolio-snapshot-flow" class="space-y-1.5">
               ${holdings.length === 0
@@ -2722,7 +3118,7 @@
         return;
       }
       allocatePortfolioFromAmount();
-      showToast("Live index allocation active. Values now drift with platform momentum.");
+      showToast("Simulated allocation created. Values now follow real share prices.");
       triggerConfetti();
       goToStep(5);
       renderPortfolioSnapshot();
@@ -2742,7 +3138,7 @@
     function confirmPurchaseFromModal() {
       allocatePortfolioFromAmount();
       closePayPalModal();
-      showToast("PayPal simulation confirmed. Live portfolio created.");
+      showToast("PayPal simulation confirmed — no payment was taken. Simulated portfolio created.");
       triggerConfetti();
       goToStep(5);
       renderPortfolioSnapshot();
@@ -2828,7 +3224,11 @@
     renderProgressBar();
     renderCurrentStep();
     startLiveSyncLoop();
+    refreshTokenInfo();
+    refreshBnbUsd();
     refreshBluAreMarketRate({ silent: true });
+    setInterval(() => refreshTokenInfo(), 60_000);
+    setInterval(() => refreshBnbUsd(), 120_000);
     setInterval(() => refreshBluAreMarketRate({ silent: true }), BLUARE_MARKET_RATE_REFRESH_MS);
     setInterval(() => autoVerifyPendingBluArePayouts(), BLUARE_PAYOUT_AUTO_VERIFY_MS);
     setTimeout(() => autoVerifyPendingBluArePayouts(), 1200);
@@ -2854,6 +3254,11 @@
       openBluArePayout,
       verifyBluAreTransfer,
       refreshBluAreMarketRate,
+      refreshTokenInfo,
+      refreshMarketData,
+      getMarketData: () => marketData,
+      getTokenInfo: () => ({ ...tokenInfo }),
+      getTokenMarket: () => ({ ...tokenMarket }),
       sellHolding,
       disconnectLiveWallet,
       signOutLocal
