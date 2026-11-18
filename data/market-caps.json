@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generatedAt": "2026-11-18T03:02:00.311Z",
+  "generatedAt": "2026-11-18T03:44:44.345Z",
   "marketDataAsOf": "2026-11-17T21:03:57.000Z",
   "sources": {
     "marketCap": "Nasdaq quote API (api.nasdaq.com/api/quote/{SYMBOL}/summary) — total market cap across share classes",
@@ -9,13 +9,13 @@
     "fx": "Yahoo Finance chart API ({CCY}=X)"
   },
   "fx": {
-    "MXN": 18.4487
+    "MXN": 18.4421
   },
   "totals": {
-    "ecosystemUsd": 19422644504195,
-    "publicUsd": 18440854504195,
+    "ecosystemUsd": 19429113960285,
+    "publicUsd": 18447323960285,
     "privateUsd": 981790000000,
-    "publicDailyChangePct": -0.19425834858874946,
+    "publicDailyChangePct": -0.19548280077887892,
     "entityCount": 29,
     "publicEntityCount": 21,
     "privateEntityCount": 8,
@@ -71,10 +71,10 @@
       "currency": "USD",
       "marketTime": "2026-11-17T21:00:02.000Z",
       "exchange": "NYSE",
-      "marketCapUsd": 20649789145,
+      "marketCapUsd": 21672211673,
       "marketCapSource": "Nasdaq quote API (market cap)",
       "priceSource": "Yahoo Finance chart API",
-      "sharesImplied": 209855581,
+      "sharesImplied": 220246054,
       "stale": false
     },
     "COIN": {
@@ -89,10 +89,10 @@
       "currency": "USD",
       "marketTime": "2026-11-17T21:00:01.000Z",
       "exchange": "NasdaqGS",
-      "marketCapUsd": 30453088338,
+      "marketCapUsd": 31729248013,
       "marketCapSource": "Nasdaq quote API (market cap)",
       "priceSource": "Yahoo Finance chart API",
-      "sharesImplied": 264763418,
+      "sharesImplied": 275858529,
       "stale": false
     },
     "COST": {
@@ -125,10 +125,10 @@
       "currency": "USD",
       "marketTime": "2026-11-17T21:00:01.000Z",
       "exchange": "NasdaqGS",
-      "marketCapUsd": 52061010000,
+      "marketCapUsd": 53070710000,
       "marketCapSource": "Nasdaq quote API (market cap)",
       "priceSource": "Yahoo Finance chart API",
-      "sharesImplied": 439000000,
+      "sharesImplied": 447514209,
       "stale": false
     },
     "ETSY": {
@@ -143,10 +143,10 @@
       "currency": "USD",
       "marketTime": "2026-11-17T21:00:02.000Z",
       "exchange": "NYSE",
-      "marketCapUsd": 7124054419,
+      "marketCapUsd": 7326207222,
       "marketCapSource": "Nasdaq quote API (market cap)",
       "priceSource": "Yahoo Finance chart API",
-      "sharesImplied": 86226754,
+      "sharesImplied": 88673532,
       "stale": false
     },
     "META": {
@@ -251,10 +251,10 @@
       "currency": "USD",
       "marketTime": "2026-11-17T21:00:01.000Z",
       "exchange": "NasdaqGS",
-      "marketCapUsd": 62304991456,
+      "marketCapUsd": 64889401421,
       "marketCapSource": "Nasdaq quote API (market cap)",
       "priceSource": "Yahoo Finance chart API",
-      "sharesImplied": 900491277,
+      "sharesImplied": 937843640,
       "stale": false
     },
     "SBUX": {
@@ -287,10 +287,10 @@
       "currency": "USD",
       "marketTime": "2026-11-17T21:02:19.000Z",
       "exchange": "NYSE",
-      "marketCapUsd": 72469415327,
+      "marketCapUsd": 72841938650,
       "marketCapSource": "Nasdaq quote API (market cap)",
       "priceSource": "Yahoo Finance chart API",
-      "sharesImplied": 454268259,
+      "sharesImplied": 456603389,
       "stale": false
     },
     "TSLA": {
@@ -395,8 +395,8 @@
       "currency": "MXN",
       "marketTime": "2026-11-17T20:59:41.000Z",
       "exchange": "Mexico",
-      "marketCapUsd": 5833838048,
-      "marketCapSource": "Yahoo price x 959,240,000 shares (https://stockanalysis.com/quote/bmv/CHDRAUI.B/statistics/, 2026-10-16) / USDMXN 18.4487",
+      "marketCapUsd": 5835925844,
+      "marketCapSource": "Yahoo price x 959,240,000 shares (https://stockanalysis.com/quote/bmv/CHDRAUI.B/statistics/, 2026-10-16) / USDMXN 18.4421",
       "priceSource": "Yahoo Finance chart API",
       "sharesImplied": 959240000,
       "stale": false
