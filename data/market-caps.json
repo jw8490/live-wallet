@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generatedAt": "2026-11-19T02:41:25.079Z",
+  "generatedAt": "2026-11-19T03:40:23.927Z",
   "marketDataAsOf": "2026-11-18T21:03:31.000Z",
   "sources": {
     "marketCap": "Nasdaq quote API (api.nasdaq.com/api/quote/{SYMBOL}/summary) — total market cap across share classes",
@@ -9,13 +9,13 @@
     "fx": "Yahoo Finance chart API ({CCY}=X)"
   },
   "fx": {
-    "MXN": 18.9183
+    "MXN": 18.9168
   },
   "totals": {
-    "ecosystemUsd": 19420360869152,
-    "publicUsd": 18438570869152,
+    "ecosystemUsd": 19395915404619,
+    "publicUsd": 18414125404619,
     "privateUsd": 981790000000,
-    "publicDailyChangePct": 0.9217502738986916,
+    "publicDailyChangePct": 0.9212895142615141,
     "entityCount": 29,
     "publicEntityCount": 21,
     "privateEntityCount": 8,
@@ -377,10 +377,10 @@
       "currency": "USD",
       "marketTime": "2026-11-18T21:00:00.000Z",
       "exchange": "NasdaqGS",
-      "marketCapUsd": 1948882642242,
+      "marketCapUsd": 1924436727565,
       "marketCapSource": "Nasdaq quote API (market cap)",
       "priceSource": "Yahoo Finance chart API",
-      "sharesImplied": 13581063709,
+      "sharesImplied": 13410708903,
       "stale": false
     },
     "CHDRAUIB": {
@@ -395,8 +395,8 @@
       "currency": "MXN",
       "marketTime": "2026-11-18T20:59:36.000Z",
       "exchange": "Mexico",
-      "marketCapUsd": 5676858407,
-      "marketCapSource": "Yahoo price x 959,240,000 shares (https://stockanalysis.com/quote/bmv/CHDRAUI.B/statistics/, 2026-10-16) / USDMXN 18.9183",
+      "marketCapUsd": 5677308551,
+      "marketCapSource": "Yahoo price x 959,240,000 shares (https://stockanalysis.com/quote/bmv/CHDRAUI.B/statistics/, 2026-10-16) / USDMXN 18.9168",
       "priceSource": "Yahoo Finance chart API",
       "sharesImplied": 959240000,
       "stale": false
