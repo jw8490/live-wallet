@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generatedAt": "2026-11-21T01:53:35.182Z",
+  "generatedAt": "2026-11-21T03:16:58.017Z",
   "marketDataAsOf": "2026-11-20T21:04:32.000Z",
   "sources": {
     "marketCap": "Nasdaq quote API (api.nasdaq.com/api/quote/{SYMBOL}/summary) — total market cap across share classes",
@@ -12,10 +12,10 @@
     "MXN": 19.143
   },
   "totals": {
-    "ecosystemUsd": 19104744482062,
-    "publicUsd": 18122954482062,
+    "ecosystemUsd": 18990665872934,
+    "publicUsd": 18008875872934,
     "privateUsd": 981790000000,
-    "publicDailyChangePct": -3.640680855488998,
+    "publicDailyChangePct": -3.63776363438858,
     "entityCount": 29,
     "publicEntityCount": 21,
     "privateEntityCount": 8,
@@ -35,10 +35,10 @@
       "currency": "USD",
       "marketTime": "2026-11-20T21:00:00.000Z",
       "exchange": "NasdaqGS",
-      "marketCapUsd": 2782977405815,
+      "marketCapUsd": 2668898796687,
       "marketCapSource": "Nasdaq quote API (market cap)",
       "priceSource": "Yahoo Finance chart API",
-      "sharesImplied": 11275331844,
+      "sharesImplied": 10813138306,
       "stale": false
     },
     "AAPL": {
