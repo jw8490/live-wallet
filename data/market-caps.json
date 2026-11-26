@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "generatedAt": "2026-11-26T04:12:16.692Z",
-  "marketDataAsOf": "2026-11-25T21:02:10.000Z",
+  "generatedAt": "2026-11-26T22:02:13.819Z",
+  "marketDataAsOf": "2026-11-26T20:59:52.000Z",
   "sources": {
     "marketCap": "Nasdaq quote API (api.nasdaq.com/api/quote/{SYMBOL}/summary) — total market cap across share classes",
     "price": "Yahoo Finance chart API (query1.finance.yahoo.com/v8/finance/chart/{SYMBOL}) — last price and daily % change",
@@ -9,13 +9,13 @@
     "fx": "Yahoo Finance chart API ({CCY}=X)"
   },
   "fx": {
-    "MXN": 19.582
+    "MXN": 19.702
   },
   "totals": {
-    "ecosystemUsd": 19019494461815,
-    "publicUsd": 18037704461815,
+    "ecosystemUsd": 19019486766802,
+    "publicUsd": 18037696766802,
     "privateUsd": 981790000000,
-    "publicDailyChangePct": -0.4420476527536743,
+    "publicDailyChangePct": -0.44160179793367726,
     "entityCount": 29,
     "publicEntityCount": 21,
     "privateEntityCount": 8,
@@ -389,14 +389,14 @@
       "type": "public",
       "symbol": "CHDRAUIB.MX",
       "note": "Listed in Mexico (BMV). Converted to USD at the live USD/MXN rate. Owner of Smart & Final.",
-      "price": 113.91,
-      "previousClose": 115.03,
-      "changePct": -0.974,
+      "price": 114.45,
+      "previousClose": 113.91,
+      "changePct": 0.474,
       "currency": "MXN",
-      "marketTime": "2026-11-25T20:59:43.000Z",
+      "marketTime": "2026-11-26T20:59:52.000Z",
       "exchange": "Mexico",
-      "marketCapUsd": 5579972853,
-      "marketCapSource": "Yahoo price x 959,240,000 shares (https://stockanalysis.com/quote/bmv/CHDRAUI.B/statistics/, 2026-10-16) / USDMXN 19.582",
+      "marketCapUsd": 5572277840,
+      "marketCapSource": "Yahoo price x 959,240,000 shares (https://stockanalysis.com/quote/bmv/CHDRAUI.B/statistics/, 2026-10-16) / USDMXN 19.702",
       "priceSource": "Yahoo Finance chart API",
       "sharesImplied": 959240000,
       "stale": false
