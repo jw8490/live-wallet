@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generatedAt": "2026-11-27T21:44:58.552Z",
+  "generatedAt": "2026-11-28T03:59:49.691Z",
   "marketDataAsOf": "2026-11-27T20:59:24.000Z",
   "sources": {
     "marketCap": "Nasdaq quote API (api.nasdaq.com/api/quote/{SYMBOL}/summary) — total market cap across share classes",
@@ -9,13 +9,13 @@
     "fx": "Yahoo Finance chart API ({CCY}=X)"
   },
   "fx": {
-    "MXN": 19.637
+    "MXN": 19.627
   },
   "totals": {
-    "ecosystemUsd": 19419794521187,
-    "publicUsd": 18438004521187,
+    "ecosystemUsd": 19419797332589,
+    "publicUsd": 18438007332589,
     "privateUsd": 981790000000,
-    "publicDailyChangePct": 2.2170180560890262,
+    "publicDailyChangePct": 2.217017500382723,
     "entityCount": 29,
     "publicEntityCount": 21,
     "privateEntityCount": 8,
@@ -395,8 +395,8 @@
       "currency": "MXN",
       "marketTime": "2026-11-27T20:59:24.000Z",
       "exchange": "Mexico",
-      "marketCapUsd": 5517938096,
-      "marketCapSource": "Yahoo price x 959,240,000 shares (https://stockanalysis.com/quote/bmv/CHDRAUI.B/statistics/, 2026-10-16) / USDMXN 19.637",
+      "marketCapUsd": 5520749498,
+      "marketCapSource": "Yahoo price x 959,240,000 shares (https://stockanalysis.com/quote/bmv/CHDRAUI.B/statistics/, 2026-10-16) / USDMXN 19.627",
       "priceSource": "Yahoo Finance chart API",
       "sharesImplied": 959240000,
       "stale": false
